@@ -15,11 +15,12 @@ class UpdateBranchRequest extends FormRequest
     {
         return [
             'company_id' => 'required|exists:companies,id',
+            'shift_id' => 'nullable|exists:shifts,id',
             'name' => 'required|string|max:255',
             'location' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:1,0',
         ];
     }
 }

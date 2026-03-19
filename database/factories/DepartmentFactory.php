@@ -21,7 +21,7 @@ class DepartmentFactory extends Factory
             'branch_id' => Branch::factory(),
             'name' => $this->faker->randomElement(['HR', 'Engineering', 'Marketing', 'Finance', 'Sales', 'IT Support']),
             'description' => $this->faker->sentence(),
-            'status' => 'active',
+            'status' => 1,
         ];
     }
 }

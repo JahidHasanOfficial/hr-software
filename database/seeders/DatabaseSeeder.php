@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
             BranchSeeder::class,
             DepartmentSeeder::class,
             DesignationSeeder::class,
+            ShiftSeeder::class, // Added
             UserSeeder::class,
+            AttendanceSeeder::class, // Added
         ]);
     }
 }

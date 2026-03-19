@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
+use App\Services\BranchService;
 use App\Http\Requests\Backend\StoreBranchRequest;
 use App\Http\Requests\Backend\UpdateBranchRequest;
-use App\Models\Branch;
-use App\Models\Company;
-use App\Services\BranchService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BranchController extends Controller
@@ -22,14 +20,14 @@ class BranchController extends Controller
 
     public function index()
     {
-        $branches = Branch::with('company')->latest()->paginate(10);
+        $branches = $this->branchService->getAllBranches(10);
         return view('backend.pages.branches.index', compact('branches'));
     }
 
     public function create()
     {
-        $companies = Company::all();
-        return view('backend.pages.branches.create', compact('companies'));
+        $data = $this->branchService->getFormData();
+        return view('backend.pages.branches.create', $data);
     }
 
     public function store(StoreBranchRequest $request)
@@ -47,8 +45,9 @@ class BranchController extends Controller
 
     public function edit(Branch $branch)
     {
-        $companies = Company::all();
-        return view('backend.pages.branches.edit', compact('branch', 'companies'));
+        $data = $this->branchService->getFormData();
+        $data['branch'] = $branch;
+        return view('backend.pages.branches.edit', $data);
     }
 
     public function update(UpdateBranchRequest $request, Branch $branch)

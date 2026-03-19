@@ -28,7 +28,7 @@ class User extends Authenticatable
         'branch_id',
         'department_id',
         'designation_id',
-        'designation', // Legacy string column
+        'shift_id',
         'status',
         'joining_date',
         'salary',
@@ -63,9 +63,42 @@ class User extends Authenticatable
         return $this->belongsTo(Department::class);
     }
 
-    public function designationRel()
+    public function designation()
     {
         return $this->belongsTo(Designation::class, 'designation_id');
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
+    }
+
+    /**
+     * Get the effective shift for the user based on hierarchy:
+     * 1. Individual User Shift
+     * 2. Department Shift
+     * 3. Branch Shift
+     */
+    public function getEffectiveShift()
+    {
+        if ($this->shift_id) {
+            return $this->shift;
+        }
+
+        if ($this->department_id && $this->department && $this->department->shift_id) {
+            return $this->department->shift;
+        }
+
+        if ($this->branch_id && $this->branch && $this->branch->shift_id) {
+            return $this->branch->shift;
+        }
+
+        return null;
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
     /**

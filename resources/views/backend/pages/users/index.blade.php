@@ -63,16 +63,14 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone ?? 'N/A' }}</td>
-                                <td>{{ $user->designation ?? 'N/A' }}</td>
+                                <td>{{ $user->designation->name ?? 'N/A' }}</td>
                                 <td>
                                     @foreach($user->roles as $role)
                                         <label class="badge badge-gradient-info text-dark">{{ $role->name }}</label>
                                     @endforeach
                                 </td>
                                 <td>
-                                    <label class="badge {{ $user->status == 'active' ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ ucfirst($user->status) }}
-                                    </label>
+                                    {!! \App\Services\HelperService::getStatusBadge($user->status) !!}
                                 </td>
                                 <td>
                                     <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-gradient-info mb-1">View</a>

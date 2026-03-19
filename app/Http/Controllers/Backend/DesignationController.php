@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\StoreDesignationRequest;
 use App\Http\Requests\Backend\UpdateDesignationRequest;
 use App\Models\Designation;
-use App\Models\Department;
 use App\Services\DesignationService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DesignationController extends Controller
@@ -22,14 +20,14 @@ class DesignationController extends Controller
 
     public function index()
     {
-        $designations = Designation::with('department.branch.company')->latest()->paginate(10);
+        $designations = $this->designationService->getAllDesignations(10);
         return view('backend.pages.designations.index', compact('designations'));
     }
 
     public function create()
     {
-        $departments = Department::with('branch.company')->get();
-        return view('backend.pages.designations.create', compact('departments'));
+        $data = $this->designationService->getFormData();
+        return view('backend.pages.designations.create', $data);
     }
 
     public function store(StoreDesignationRequest $request)
@@ -47,8 +45,9 @@ class DesignationController extends Controller
 
     public function edit(Designation $designation)
     {
-        $departments = Department::with('branch.company')->get();
-        return view('backend.pages.designations.edit', compact('designation', 'departments'));
+        $data = $this->designationService->getFormData();
+        $data['designation'] = $designation;
+        return view('backend.pages.designations.edit', $data);
     }
 
     public function update(UpdateDesignationRequest $request, Designation $designation)

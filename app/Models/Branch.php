@@ -9,11 +9,16 @@ class Branch extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['company_id', 'name', 'location', 'email', 'phone', 'status'];
+    protected $fillable = ['company_id', 'shift_id', 'name', 'location', 'email', 'phone', 'status'];
 
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
     }
 
     public function departments()

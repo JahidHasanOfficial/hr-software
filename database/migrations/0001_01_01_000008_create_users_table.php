@@ -17,6 +17,21 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // HR & Org Fields
+            $table->string('phone')->nullable();
+            $table->date('joining_date')->nullable();
+            $table->decimal('salary', 10, 2)->nullable();
+            $table->string('image')->nullable();
+            $table->tinyInteger('status')->default(1);
+
+            // Relationships
+            $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('branch_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('department_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('designation_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('shift_id')->nullable()->constrained('shifts')->onDelete('set null');
+
             $table->rememberToken();
             $table->timestamps();
         });

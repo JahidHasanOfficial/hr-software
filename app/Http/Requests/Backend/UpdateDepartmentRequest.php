@@ -15,9 +15,10 @@ class UpdateDepartmentRequest extends FormRequest
     {
         return [
             'branch_id' => 'required|exists:branches,id',
+            'shift_id' => 'nullable|exists:shifts,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:1,0',
         ];
     }
 }

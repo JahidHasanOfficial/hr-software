@@ -12,7 +12,7 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Define ALL granular permissions for EACH action
+        // Define ALL granular permissions
         $permissions = [
             'dashboard access',
 
@@ -34,14 +34,20 @@ class RolePermissionSeeder extends Seeder
             // Designation
             'designation.index', 'designation.create', 'designation.store', 'designation.show', 'designation.edit', 'designation.update', 'designation.destroy',
 
+            // Shifts
+            'shift.index', 'shift.create', 'shift.store', 'shift.edit', 'shift.update', 'shift.destroy',
+
+            // Attendance
+            'attendance.index', 'attendance.check_in', 'attendance.check_out', 'attendance.logs',
+
             // Broad Categories
             'employee management',
             'role permission management',
             'organization management',
+            'attendance management', // Admin/HR Category
 
             // HR Functions
             'payroll management',
-            'attendance management',
             'leave management',
             
             // Profile
@@ -53,13 +59,11 @@ class RolePermissionSeeder extends Seeder
             Permission::findOrCreate($permission);
         }
 
-        // --- Role Assignments ---
-
         // 1. Admin (Everything)
         $adminRole = Role::findOrCreate('Admin');
         $adminRole->syncPermissions(Permission::all());
 
-        // 2. HR Manager (All HR & Org CRUD)
+        // 2. HR Manager
         $hrManagerRole = Role::findOrCreate('HR Manager');
         $hrManagerRole->syncPermissions([
             'dashboard access',
@@ -70,8 +74,10 @@ class RolePermissionSeeder extends Seeder
             'branch.index', 'branch.create', 'branch.store', 'branch.show', 'branch.edit', 'branch.update', 'branch.destroy',
             'department.index', 'department.create', 'department.store', 'department.show', 'department.edit', 'department.update', 'department.destroy',
             'designation.index', 'designation.create', 'designation.store', 'designation.show', 'designation.edit', 'designation.update', 'designation.destroy',
-            'payroll management',
             'attendance management',
+            'shift.index', 'shift.create', 'shift.store', 'shift.edit', 'shift.update', 'shift.destroy',
+            'attendance.index', 'attendance.check_in', 'attendance.check_out', 'attendance.logs',
+            'payroll management',
             'leave management',
         ]);
 
@@ -79,6 +85,9 @@ class RolePermissionSeeder extends Seeder
         $employeeRole = Role::findOrCreate('Employee');
         $employeeRole->syncPermissions([
             'dashboard access',
+            'attendance.check_in', 
+            'attendance.check_out', 
+            'attendance.logs',
             'profile.edit',
             'profile.update',
         ]);
@@ -86,13 +95,13 @@ class RolePermissionSeeder extends Seeder
         // --- Users ---
         $admin = User::updateOrCreate(
             ['email' => 'admin@hrsoftware.com'],
-            ['name' => 'Super Admin', 'password' => Hash::make('password'), 'status' => 'active']
+            ['name' => 'Super Admin', 'password' => Hash::make('password'), 'status' => 1]
         );
         $admin->syncRoles([$adminRole]);
 
         $hr = User::updateOrCreate(
             ['email' => 'hr@hrsoftware.com'],
-            ['name' => 'HR Manager', 'password' => Hash::make('password'), 'status' => 'active']
+            ['name' => 'HR Manager', 'password' => Hash::make('password'), 'status' => 1]
         );
         $hr->syncRoles([$hrManagerRole]);
     }

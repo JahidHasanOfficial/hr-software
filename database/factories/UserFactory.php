@@ -35,8 +35,7 @@ class UserFactory extends Factory
             'branch_id' => $designation->department->branch_id,
             'department_id' => $designation->department_id,
             'designation_id' => $designation->id,
-            'designation' => $designation->name, // Legacy support
-            'status' => 'active',
+            'status' => 1,
             'joining_date' => fake()->date(),
             'salary' => fake()->randomFloat(2, 3000, 15000),
             'email_verified_at' => now(),

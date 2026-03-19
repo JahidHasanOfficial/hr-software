@@ -29,10 +29,10 @@ class StoreUserRequest extends FormRequest
             'branch_id' => 'nullable|exists:branches,id',
             'department_id' => 'nullable|exists:departments,id',
             'designation_id' => 'nullable|exists:designations,id',
-            'designation' => 'nullable|string',
+            'shift_id' => 'nullable|exists:shifts,id',
             'joining_date' => 'nullable|date',
             'salary' => 'nullable|numeric',
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:1,0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }

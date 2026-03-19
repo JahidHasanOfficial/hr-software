@@ -13,7 +13,10 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
-        $userId = $this->route('user')->id;
+        // Get user ID from route parameter, handling both model binding and ID string
+        $user = $this->route('user');
+        $userId = is_object($user) ? $user->id : $user;
+
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $userId,
@@ -24,10 +27,10 @@ class UpdateUserRequest extends FormRequest
             'branch_id' => 'nullable|exists:branches,id',
             'department_id' => 'nullable|exists:departments,id',
             'designation_id' => 'nullable|exists:designations,id',
-            'designation' => 'nullable|string',
+            'shift_id' => 'nullable|exists:shifts,id',
             'joining_date' => 'nullable|date',
             'salary' => 'nullable|numeric',
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:1,0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }

@@ -28,14 +28,30 @@
                 <form class="forms-sample" action="{{ route('departments.store') }}" method="POST">
                     @csrf
                     
-                    <div class="form-group">
-                        <label for="branch_id">Select Branch</label>
-                        <select class="form-control" name="branch_id" id="branch_id" required>
-                            <option value="">Choose Branch (Company > Branch)...</option>
-                            @foreach($branches as $branch)
-                                <option value="{{ $branch->id }}">{{ $branch->company->name }} > {{ $branch->name }}</option>
-                            @endforeach
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="branch_id">Select Branch</label>
+                                <select class="form-control" name="branch_id" id="branch_id" required>
+                                    <option value="">Choose Branch...</option>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->company->name }} > {{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="shift_id">Department Default Shift</label>
+                                <select class="form-control" name="shift_id" id="shift_id">
+                                    <option value="">No Default Shift (Fails back to Branch)</option>
+                                    @foreach($shifts as $shift)
+                                        <option value="{{ $shift->id }}">{{ $shift->name }} ({{ \App\Services\HelperService::formatTime($shift->start_time) }} - {{ \App\Services\HelperService::formatTime($shift->end_time) }})</option>
+                                    @endforeach
+                                </select>
+                                <small class="text-muted">This shift overrides the Branch shift but can be overridden by individual user settings.</small>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -51,8 +67,8 @@
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" name="status" id="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
                         </select>
                     </div>
 

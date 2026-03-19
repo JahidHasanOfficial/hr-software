@@ -7,6 +7,14 @@ use App\Helpers\ImageHelper;
 
 class CompanyService
 {
+    /**
+     * Get Paginated Companies
+     */
+    public function getAllCompanies($perPage = 10)
+    {
+        return Company::latest()->paginate($perPage);
+    }
+
     public function createCompany(array $data)
     {
         if (isset($data['logo'])) {

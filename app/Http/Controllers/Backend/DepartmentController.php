@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
+use App\Services\DepartmentService;
 use App\Http\Requests\Backend\StoreDepartmentRequest;
 use App\Http\Requests\Backend\UpdateDepartmentRequest;
-use App\Models\Department;
-use App\Models\Branch;
-use App\Services\DepartmentService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
@@ -22,14 +20,14 @@ class DepartmentController extends Controller
 
     public function index()
     {
-        $departments = Department::with('branch.company')->latest()->paginate(10);
+        $departments = $this->departmentService->getAllDepartments(10);
         return view('backend.pages.departments.index', compact('departments'));
     }
 
     public function create()
     {
-        $branches = Branch::with('company')->get();
-        return view('backend.pages.departments.create', compact('branches'));
+        $data = $this->departmentService->getFormData();
+        return view('backend.pages.departments.create', $data);
     }
 
     public function store(StoreDepartmentRequest $request)
@@ -47,8 +45,9 @@ class DepartmentController extends Controller
 
     public function edit(Department $department)
     {
-        $branches = Branch::with('company')->get();
-        return view('backend.pages.departments.edit', compact('department', 'branches'));
+        $data = $this->departmentService->getFormData();
+        $data['department'] = $department;
+        return view('backend.pages.departments.edit', $data);
     }
 
     public function update(UpdateDepartmentRequest $request, Department $department)

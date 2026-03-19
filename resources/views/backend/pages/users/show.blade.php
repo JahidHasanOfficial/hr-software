@@ -29,15 +29,13 @@
                     <img src="{{ asset('backend/images/faces/face1.jpg') }}" alt="user image" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid #b66dff;">
                 @endif
                 <h4 class="mt-3 mb-0">{{ $user->name }}</h4>
-                <p class="text-muted">{{ $user->designation ?? 'Employee' }}</p>
+                <p class="text-muted">{{ $user->designation->name ?? 'Employee' }}</p>
                 @foreach($user->roles as $role)
                     <label class="badge badge-gradient-primary">{{ $role->name }}</label>
                 @endforeach
                 <div class="mt-4 pt-3 border-top">
                     <p class="mb-2"><strong>Status:</strong> 
-                        <span class="text-{{ $user->status == 'active' ? 'success' : 'danger' }} font-weight-bold">
-                            {{ strtoupper($user->status) }}
-                        </span>
+                        {!! \App\Services\HelperService::getStatusBadge($user->status) !!}
                     </p>
                     <p class="mb-0"><strong>Joined:</strong> {{ $user->joining_date ?? 'N/A' }}</p>
                 </div>
@@ -69,7 +67,19 @@
                             </tr>
                             <tr>
                                 <th>Designation</th>
-                                <td>{{ $user->designation ?? 'Not assigned' }}</td>
+                                <td>{{ $user->designation->name ?? 'Not assigned' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Office Shift</th>
+                                <td>
+                                    @if($user->shift)
+                                        <label class="badge badge-gradient-info">{{ $user->shift->name }}</label>
+                                        <br>
+                                        <small>{{ \App\Services\HelperService::formatTime($user->shift->start_time) }} - {{ \App\Services\HelperService::formatTime($user->shift->end_time) }}</small>
+                                    @else
+                                        <span class="text-danger small">No shift assigned</span>
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <th>Joining Date</th>

@@ -20,7 +20,7 @@ class StoreCompanyRequest extends FormRequest
             'website' => 'nullable|url',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'address' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:0,1',
         ];
     }
 }

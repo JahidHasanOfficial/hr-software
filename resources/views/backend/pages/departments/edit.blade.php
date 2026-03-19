@@ -29,15 +29,32 @@
                     @csrf
                     @method('PUT')
                     
-                    <div class="form-group">
-                        <label for="branch_id">Select Branch</label>
-                        <select class="form-control" name="branch_id" id="branch_id" required>
-                            @foreach($branches as $branch)
-                                <option value="{{ $branch->id }}" {{ $department->branch_id == $branch->id ? 'selected' : '' }}>
-                                    {{ $branch->company->name }} > {{ $branch->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="branch_id">Select Branch</label>
+                                <select class="form-control" name="branch_id" id="branch_id" required>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}" {{ $department->branch_id == $branch->id ? 'selected' : '' }}>
+                                            {{ $branch->company->name }} > {{ $branch->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="shift_id">Department Default Shift</label>
+                                <select class="form-control" name="shift_id" id="shift_id">
+                                    <option value="">No Default Shift (Fails back to Branch)</option>
+                                    @foreach($shifts as $shift)
+                                        <option value="{{ $shift->id }}" {{ $department->shift_id == $shift->id ? 'selected' : '' }}>
+                                            {{ $shift->name }} ({{ \App\Services\HelperService::formatTime($shift->start_time) }} - {{ \App\Services\HelperService::formatTime($shift->end_time) }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -53,8 +70,8 @@
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" name="status" id="status">
-                            <option value="active" {{ $department->status == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ $department->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="1" {{ $department->status == 1 ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ $department->status == 0 ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </div>
 

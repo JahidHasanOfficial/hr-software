@@ -23,7 +23,7 @@ class CompanyFactory extends Factory
             'website' => $this->faker->url(),
             'logo' => null,
             'address' => $this->faker->address(),
-            'status' => 'active',
+            'status' => 1,
         ];
     }
 }

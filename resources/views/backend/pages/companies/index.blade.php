@@ -62,9 +62,7 @@
                                 <td>{{ $company->phone ?? 'N/A' }}</td>
                                 <td>{{ $company->website ?? 'N/A' }}</td>
                                 <td>
-                                    <label class="badge {{ $company->status == 'active' ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ strtoupper($company->status) }}
-                                    </label>
+                                    {!! \App\Services\HelperService::getStatusBadge($company->status) !!}
                                 </td>
                                 <td>
                                     <a href="{{ route('companies.show', $company->id) }}" class="btn btn-sm btn-gradient-info">View</a>

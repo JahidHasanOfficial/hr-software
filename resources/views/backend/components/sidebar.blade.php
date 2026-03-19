@@ -57,6 +57,29 @@
           </li>
           @endcan
 
+          @if(auth()->user()->can('attendance.index') || auth()->user()->can('shift.index') || auth()->user()->can('attendance.logs'))
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#attendance-management" aria-expanded="false" aria-controls="attendance-management">
+              <span class="menu-title">Attendance & Tracking</span>
+              <i class="menu-arrow"></i>
+              <i class="mdi mdi-calendar-clock menu-icon"></i>
+            </a>
+            <div class="collapse" id="attendance-management">
+              <ul class="nav flex-column sub-menu">
+                @can('attendance.index')
+                <li class="nav-item"> <a class="nav-link" href="{{ route('attendances.index') }}">Attendance Logs</a></li>
+                @endcan
+                @can('shift.index')
+                <li class="nav-item"> <a class="nav-link" href="{{ route('shifts.index') }}">Shift Management</a></li>
+                @endcan
+                @can('attendance.logs')
+                <li class="nav-item"> <a class="nav-link" href="{{ route('attendances.logs') }}">My Attendance</a></li>
+                @endcan
+              </ul>
+            </div>
+          </li>
+          @endif
+
           @can('role permission management')
           <li class="nav-item">
             <a class="nav-link" href="{{ route('roles.index') }}">
@@ -71,15 +94,6 @@
             <a class="nav-link" href="#">
               <span class="menu-title">Payroll</span>
               <i class="mdi mdi-currency-usd menu-icon"></i>
-            </a>
-          </li>
-          @endcan
-
-          @can('attendance management')
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="menu-title">Attendance</span>
-              <i class="mdi mdi-calendar-check menu-icon"></i>
             </a>
           </li>
           @endcan

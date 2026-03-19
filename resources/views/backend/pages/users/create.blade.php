@@ -92,6 +92,15 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="shift_id">Office Shift</label>
+                                <select class="form-control" name="shift_id" id="shift_id">
+                                    <option value="">Select Shift</option>
+                                    @foreach($shifts as $shift)
+                                        <option value="{{ $shift->id }}">{{ $shift->name }} ({{ \App\Services\HelperService::formatTime($shift->start_time) }} - {{ \App\Services\HelperService::formatTime($shift->end_time) }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <h5 class="mb-3 text-primary">Personal & Security</h5>
@@ -127,8 +136,8 @@
                             <div class="form-group">
                                 <label for="status">Account Status</label>
                                 <select class="form-control" name="status" id="status">
-                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                    <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
                         </div>

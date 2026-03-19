@@ -21,7 +21,7 @@ class DesignationFactory extends Factory
             'department_id' => Department::factory(),
             'name' => $this->faker->jobTitle(),
             'description' => $this->faker->sentence(),
-            'status' => 'active',
+            'status' => 1,
         ];
     }
 }

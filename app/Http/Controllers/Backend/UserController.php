@@ -4,15 +4,9 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Company;
-use App\Models\Branch;
-use App\Models\Department;
-use App\Models\Designation;
 use App\Services\UserService;
 use App\Http\Requests\Backend\StoreUserRequest;
 use App\Http\Requests\Backend\UpdateUserRequest;
-use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -26,18 +20,14 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::with(['company', 'branch', 'department', 'designationRel'])->latest()->paginate(10);
+        $users = $this->userService->getAllUsers(10);
         return view('backend.pages.users.index', compact('users'));
     }
 
     public function create()
     {
-        $roles = Role::all();
-        $companies = Company::where('status', 'active')->get();
-        $branches = Branch::where('status', 'active')->get();
-        $departments = Department::where('status', 'active')->get();
-        $designations = Designation::where('status', 'active')->get();
-        return view('backend.pages.users.create', compact('roles', 'companies', 'branches', 'departments', 'designations'));
+        $data = $this->userService->getFormData();
+        return view('backend.pages.users.create', $data);
     }
 
     public function store(StoreUserRequest $request)
@@ -55,18 +45,15 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::all();
-        $userRoles = $user->roles->pluck('name')->toArray();
-        $companies = Company::where('status', 'active')->get();
-        $branches = Branch::where('status', 'active')->get();
-        $departments = Department::where('status', 'active')->get();
-        $designations = Designation::where('status', 'active')->get();
-        return view('backend.pages.users.edit', compact('user', 'roles', 'userRoles', 'companies', 'branches', 'departments', 'designations'));
+        $data = $this->userService->getFormData();
+        $data['user'] = $user;
+        $data['userRoles'] = $user->roles->pluck('name')->toArray();
+        return view('backend.pages.users.edit', $data);
     }
 
     public function show(User $user)
     {
-        $user->load(['company', 'branch', 'department', 'designationRel']);
+        $user->load(['company', 'branch', 'department', 'designation', 'shift', 'roles']);
         return view('backend.pages.users.show', compact('user'));
     }
 

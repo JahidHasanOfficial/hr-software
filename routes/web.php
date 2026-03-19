@@ -8,6 +8,8 @@ use App\Http\Controllers\Backend\CompanyController;
 use App\Http\Controllers\Backend\BranchController;
 use App\Http\Controllers\Backend\DepartmentController;
 use App\Http\Controllers\Backend\DesignationController;
+use App\Http\Controllers\Backend\ShiftController;
+use App\Http\Controllers\Backend\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -80,6 +82,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/designations/{designation}/edit', [DesignationController::class, 'edit'])->name('designations.edit')->middleware('permission:designation.edit');
     Route::put('/admin/designations/{designation}/update', [DesignationController::class, 'update'])->name('designations.update')->middleware('permission:designation.update');
     Route::delete('/admin/designations/{designation}/destroy', [DesignationController::class, 'destroy'])->name('designations.destroy')->middleware('permission:designation.destroy');
+
+    /**
+     * Attendance Tracking (Granular Permissions)
+     */
+    Route::post('/admin/attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.check_in')->middleware('permission:attendance.check_in');
+    Route::post('/admin/attendances/check-out', [AttendanceController::class, 'checkOut'])->name('attendances.check_out')->middleware('permission:attendance.check_out');
+    Route::get('/admin/attendances/my-logs', [AttendanceController::class, 'logs'])->name('attendances.logs')->middleware('permission:attendance.logs');
+
+    /**
+     * Attendance Management (Admin/HR only)
+     */
+    Route::middleware('permission:attendance management')->group(function() {
+        // Shift Management
+        Route::get('/admin/shifts', [ShiftController::class, 'index'])->name('shifts.index')->middleware('permission:shift.index');
+        Route::get('/admin/shifts/create', [ShiftController::class, 'create'])->name('shifts.create')->middleware('permission:shift.create');
+        Route::post('/admin/shifts/store', [ShiftController::class, 'store'])->name('shifts.store')->middleware('permission:shift.store');
+        Route::get('/admin/shifts/{shift}/edit', [ShiftController::class, 'edit'])->name('shifts.edit')->middleware('permission:shift.edit');
+        Route::put('/admin/shifts/{shift}/update', [ShiftController::class, 'update'])->name('shifts.update')->middleware('permission:shift.update');
+        Route::delete('/admin/shifts/{shift}/destroy', [ShiftController::class, 'destroy'])->name('shifts.destroy')->middleware('permission:shift.destroy');
+
+        // Attendance Tracking Overview
+        Route::get('/admin/attendances', [AttendanceController::class, 'index'])->name('attendances.index')->middleware('permission:attendance.index');
+    });
 });
 
 Route::middleware('auth')->group(function () {
