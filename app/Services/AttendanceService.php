@@ -4,8 +4,12 @@ namespace App\Services;
 
 use App\Models\Attendance;
 use App\Models\AttendanceLog;
+use App\Models\AttendanceManualLog;
+use App\Models\Leave;
+use App\Models\LeaveBalance;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceService
@@ -212,7 +216,7 @@ class AttendanceService
             );
 
             // Audit Log
-            \App\Models\AttendanceManualLog::create([
+            AttendanceManualLog::create([
                 'attendance_id' => $attendance->id,
                 'user_id' => $employee->id,
                 'admin_id' => $admin->id,
@@ -249,8 +253,8 @@ class AttendanceService
         $lateToday = (clone $attQuery)->where('status', 2)->count();
         $activeNow = (clone $attQuery)->whereNotNull('check_in_time')->whereNull('check_out_time')->count();
 
-        // Leave Overview
-        $leaveQuery = \App\Models\Leave::query();
+            // Leave Overview
+        $leaveQuery = Leave::query();
         if ($companyId) {
             $leaveQuery->whereHas('user', function($q) use ($companyId) {
                 $q->where('company_id', $companyId);
@@ -331,7 +335,7 @@ class AttendanceService
                 ->whereBetween('date', [$startDate, $endDate])
                 ->get();
             
-            $approvedLeaves = \App\Models\Leave::where('user_id', $user->id)
+            $approvedLeaves = Leave::where('user_id', $user->id)
                 ->where('status', 'approved')
                 ->where(function($q) use ($startDate, $endDate) {
                     $q->whereBetween('start_date', [$startDate, $endDate])
@@ -346,7 +350,7 @@ class AttendanceService
             $leaveDays = 0;
             
             // Calculate actual leave days within the range
-            $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
+            $period = CarbonPeriod::create($startDate, $endDate);
             foreach ($period as $dateString) {
                 $d = $dateString->format('Y-m-d');
                 $onLeave = $approvedLeaves->contains(function($l) use ($d) {

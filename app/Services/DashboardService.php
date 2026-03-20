@@ -2,7 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Attendance;
+use App\Models\AttendanceRequest;
+use App\Models\LeaveBalance;
 use App\Models\User;
+use App\Services\AttendanceService;
+use App\Services\LeaveService;
 use Spatie\Permission\Models\Role;
 
 class DashboardService
@@ -12,8 +17,8 @@ class DashboardService
      */
     public function getStatistics()
     {
-        $attendanceService = app(\App\Services\AttendanceService::class);
-        $leaveService = app(\App\Services\LeaveService::class);
+        $attendanceService = app(AttendanceService::class);
+        $leaveService = app(LeaveService::class);
         $user = auth()->user();
         
         // Ensure leave balance is initialized
@@ -28,24 +33,24 @@ class DashboardService
 
         // Personal Stats for current logged in user (usually for employees)
         $personalStats = [
-            'present' => \App\Models\Attendance::where('user_id', $user->id)
+            'present' => Attendance::where('user_id', $user->id)
                 ->whereMonth('date', date('m'))
                 ->whereYear('date', date('Y'))
                 ->count(),
-            'late' => \App\Models\Attendance::where('user_id', $user->id)
+            'late' => Attendance::where('user_id', $user->id)
                 ->where('status', 'late')
                 ->whereMonth('date', date('m'))
                 ->whereYear('date', date('Y'))
                 ->count(),
-            'pending_requests' => \App\Models\AttendanceRequest::where('user_id', $user->id)
+            'pending_requests' => AttendanceRequest::where('user_id', $user->id)
                 ->where('status', 'pending')
                 ->count(),
-            'remaining_leave' => \App\Models\LeaveBalance::where('user_id', $user->id)
+            'remaining_leave' => LeaveBalance::where('user_id', $user->id)
                 ->where('year', date('Y'))
                 ->sum('remaining_quota'),
         ];
 
-        $myRecentLogs = \App\Models\Attendance::where('user_id', $user->id)
+        $myRecentLogs = Attendance::where('user_id', $user->id)
             ->with('logs')
             ->latest('date')
             ->take(5)
