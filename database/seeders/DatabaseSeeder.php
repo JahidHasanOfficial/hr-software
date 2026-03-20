@@ -19,8 +19,13 @@ class DatabaseSeeder extends Seeder
             BranchSeeder::class,
             DepartmentSeeder::class,
             DesignationSeeder::class,
+            HolidaySeeder::class,
+            WeeklyOffSeeder::class,
             UserSeeder::class,
+            RosterSeeder::class,
             AttendanceSeeder::class,
+            AttendanceRequestSeeder::class,
+            AttendanceManualLogSeeder::class,
         ]);
     }
 }

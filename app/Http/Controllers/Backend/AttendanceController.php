@@ -18,7 +18,7 @@ class AttendanceController extends Controller
 
     public function index()
     {
-        $attendances = $this->attendanceService->getAllAttendance(15);
+        $attendances = $this->attendanceService->getAllAttendance(15, request('search'));
         return view('backend.pages.attendances.index', compact('attendances'));
     }
 

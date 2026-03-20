@@ -22,8 +22,12 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Daily Presence Record</h4>
-                
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <h4 class="card-title mb-0">Daily Presence Logs</h4>
+                    <div class="d-flex align-items-center flex-grow-1 justify-content-end">
+                        @include('backend.components.search_box', ['action' => route('attendances.index'), 'placeholder' => 'Search by name or date...'])
+                    </div>
+                </div>
                 <div class="table-responsive mt-3">
                     <table class="table table-hover">
                         <thead>

@@ -11,9 +11,13 @@ class DepartmentService
     /**
      * Get Paginated Departments
      */
-    public function getAllDepartments($perPage = 10)
+    public function getAllDepartments($perPage = 10, $search = null)
     {
-        return Department::with(['branch.company', 'shift'])->latest()->paginate($perPage);
+        $query = Department::with(['branch.company', 'shift']);
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     /**

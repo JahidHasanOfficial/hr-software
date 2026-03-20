@@ -21,7 +21,7 @@ class CompanyController extends Controller
 
     public function index()
     {
-        $companies = $this->companyService->getAllCompanies(10);
+        $companies = $this->companyService->getAllCompanies(10, request('search'));
         return view('backend.pages.companies.index', compact('companies'));
     }
 

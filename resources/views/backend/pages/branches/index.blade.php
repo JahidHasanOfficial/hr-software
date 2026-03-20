@@ -22,9 +22,12 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="card-title">Branch List</h4>
-                    <a href="{{ route('branches.create') }}" class="btn btn-gradient-primary btn-fw">Add Branch</a>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <h4 class="card-title mb-0">Branch List</h4>
+                    <div class="d-flex align-items-center flex-grow-1 justify-content-end">
+                        @include('backend.components.search_box', ['action' => route('branches.index'), 'placeholder' => 'Search branch...'])
+                        <a href="{{ route('branches.create') }}" class="btn btn-gradient-primary btn-sm btn-fw ml-2">Add Branch</a>
+                    </div>
                 </div>
                 
                 @if(session('success'))
@@ -57,16 +60,14 @@
                                     {{ $branch->shift ? $branch->shift->name : 'NONE' }}
                                 </td>
                                 <td class="text-center">
-                                    <label class="badge {{ $branch->status == 1 ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ $branch->status == 1 ? 'ACTIVE' : 'INACTIVE' }}
-                                    </label>
+                                    {!! \App\Services\HelperService::getStatusBadge($branch->status) !!}
                                 </td>
                                 <td>
-                                    <a href="{{ route('branches.edit', $branch->id) }}" class="btn btn-sm btn-gradient-warning">Edit</a>
+                                    <a href="{{ route('branches.edit', $branch->id) }}" class="btn btn-sm btn-gradient-warning p-2" title="Edit"><i class="mdi mdi-pencil"></i></a>
                                     <form action="{{ route('branches.destroy', $branch->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-gradient-danger" onclick="return confirm('Delete branch?')">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-gradient-danger p-2" title="Delete" onclick="return confirm('Delete branch?')"><i class="mdi mdi-delete"></i></button>
                                     </form>
                                 </td>
                             </tr>

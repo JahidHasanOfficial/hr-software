@@ -10,9 +10,14 @@ class CompanyService
     /**
      * Get Paginated Companies
      */
-    public function getAllCompanies($perPage = 10)
+    public function getAllCompanies($perPage = 10, $search = null)
     {
-        return Company::latest()->paginate($perPage);
+        $query = Company::query();
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+        }
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     public function createCompany(array $data)

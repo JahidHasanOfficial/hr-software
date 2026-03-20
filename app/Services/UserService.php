@@ -14,14 +14,19 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    /**
-     * Get Paginated Users for Index
-     */
-    public function getAllUsers($perPage = 10)
+    public function getAllUsers($perPage = 10, $search = null)
     {
-        return User::with(['company', 'branch', 'department', 'designation', 'shift', 'roles'])
-            ->latest()
-            ->paginate($perPage);
+        $query = User::with(['company', 'branch', 'department', 'designation', 'shift', 'roles']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('phone', 'LIKE', "%{$search}%");
+            });
+        }
+
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     /**

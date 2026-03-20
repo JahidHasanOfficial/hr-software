@@ -10,9 +10,13 @@ class DesignationService
     /**
      * Get Paginated Designations
      */
-    public function getAllDesignations($perPage = 10)
+    public function getAllDesignations($perPage = 10, $search = null)
     {
-        return Designation::with(['department.branch.company'])->latest()->paginate($perPage);
+        $query = Designation::with(['department.branch.company']);
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     /**

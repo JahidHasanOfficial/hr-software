@@ -69,6 +69,14 @@
                 @can('attendance.index')
                 <li class="nav-item"> <a class="nav-link" href="{{ route('attendances.index') }}">Attendance Logs</a></li>
                 @endcan
+                
+                @can('attendance management')
+                <li class="nav-item"> <a class="nav-link" href="{{ route('attendance-requests.index') }}">Attendance Requests</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('rosters.index') }}">Rosters / Scheduling</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('holidays.index') }}">Holidays</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('weekly-offs.index') }}">Weekly Offs</a></li>
+                @endcan
+
                 @can('shift.index')
                 <li class="nav-item"> <a class="nav-link" href="{{ route('shifts.index') }}">Shift Management</a></li>
                 @endcan

@@ -9,9 +9,13 @@ class ShiftService
     /**
      * Get Paginated Shifts
      */
-    public function getAllShifts($perPage = 10)
+    public function getAllShifts($perPage = 10, $search = null)
     {
-        return Shift::latest()->paginate($perPage);
+        $query = Shift::query();
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     /**

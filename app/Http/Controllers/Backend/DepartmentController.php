@@ -20,7 +20,7 @@ class DepartmentController extends Controller
 
     public function index()
     {
-        $departments = $this->departmentService->getAllDepartments(10);
+        $departments = $this->departmentService->getAllDepartments(10, request('search'));
         return view('backend.pages.departments.index', compact('departments'));
     }
 

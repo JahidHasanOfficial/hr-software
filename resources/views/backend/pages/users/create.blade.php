@@ -169,4 +169,18 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput.files.length > 0) {
+            const fileSize = fileInput.files[0].size / 1024 / 1024; // size in MB
+            if (fileSize > 2) {
+                e.preventDefault();
+                alert('File size exceeds 2MB limit. Please compress your image or select a smaller file.');
+            }
+        }
+    });
+</script>
+@endpush
 @endsection

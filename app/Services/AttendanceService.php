@@ -23,8 +23,16 @@ class AttendanceService
             $attendance = Attendance::where('user_id', $user->id)->where('date', $today)->first();
             
             if (!$attendance) {
-                $shift = $user->getEffectiveShift();
+                // Check if it's a Weekly Off or Holiday
+                $shift = $user->getEffectiveShift($today);
                 $status = 1; // Default: Present
+
+                if ($this->isHoliday($user, $today)) {
+                    $status = 5; // Special: Present on Holiday
+                } elseif ($this->isWeeklyOff($user, $today)) {
+                    $status = 6; // Special: Present on Weekly Off
+                }
+
                 $lateMinutes = 0;
 
                 if ($shift && !$shift->is_flexible) {
@@ -36,7 +44,8 @@ class AttendanceService
                         
                         // Change status only if late threshold (grace period) is exceeded
                         if ($currentTime->gt($lateLimit)) {
-                            $status = 2; // 2 = Late
+                            // Only mark as late if not a special status (Holiday/Weekly Off)
+                            if ($status == 1) $status = 2; // Late
                         }
                     }
                 }
@@ -100,7 +109,7 @@ class AttendanceService
             
             $shift = $attendance->shift; // Use the shift stored at check-in
             if (!$shift) {
-                $shift = $user->getEffectiveShift();
+                $shift = $user->getEffectiveShift($today);
             }
 
             $earlyLeavingMinutes = 0;
@@ -129,13 +138,18 @@ class AttendanceService
 
                 // Check for Half Day
                 if ($stayMinutes < $shift->half_day_threshold) {
-                    $attendance->status = 3; // Half Day
+                    $attendance->status = 3; 
                 }
             } else {
-                // For flexible shifts, maybe OT is after 9 hours (540 mins)
+                // Flexible shift logic...
                 if ($stayMinutes > 540) {
                     $overtimeMinutes = $stayMinutes - 540;
                 }
+            }
+
+            // Comp-off Earner Logic
+            if ($attendance->status == 5 || $attendance->status == 6) {
+                // User worked on Holiday/Weekly Off - can trigger comp-off credit here
             }
 
             $attendance->update([
@@ -146,7 +160,7 @@ class AttendanceService
                 'stay_minutes' => $stayMinutes,
                 'early_leaving_minutes' => $earlyLeavingMinutes,
                 'overtime_minutes' => $overtimeMinutes,
-                'status' => $attendance->status, // Might have changed to Half Day
+                'status' => $attendance->status,
             ]);
 
             return $attendance;
@@ -154,13 +168,113 @@ class AttendanceService
     }
 
     /**
+     * Check if a date is a Holiday for the user
+     */
+    public function isHoliday(User $user, $date)
+    {
+        return \App\Models\Holiday::where('company_id', $user->company_id)
+            ->where('date', $date)
+            ->exists();
+    }
+
+    /**
+     * Check if a date is a Weekly Off for the user
+     */
+    public function isWeeklyOff(User $user, $date)
+    {
+        $dayNum = Carbon::parse($date)->dayOfWeek; // 0=Sunday
+        
+        return \App\Models\WeeklyOff::where('company_id', $user->company_id)
+            ->where(function ($query) use ($user) {
+                $query->whereNull('branch_id')->orWhere('branch_id', $user->branch_id);
+            })
+            ->where(function ($query) use ($user) {
+                $query->whereNull('department_id')->orWhere('department_id', $user->department_id);
+            })
+            ->where('day', $dayNum)
+            ->exists();
+    }
+
+    /**
+     * Handle Manual Correction by Admin
+     */
+    public function handleManualCorrection(User $admin, User $employee, array $data)
+    {
+        return DB::transaction(function () use ($admin, $employee, $data) {
+            $attendance = Attendance::updateOrCreate(
+                ['user_id' => $employee->id, 'date' => $data['date']],
+                [
+                    'check_in_time' => $data['check_in_time'] ?? null,
+                    'check_out_time' => $data['check_out_time'] ?? null,
+                    'notes' => $data['reason'],
+                    'status' => $data['status'] ?? 1,
+                ]
+            );
+
+            // Audit Log
+            \App\Models\AttendanceManualLog::create([
+                'attendance_id' => $attendance->id,
+                'user_id' => $employee->id,
+                'admin_id' => $admin->id,
+                'event' => 'manual_correction',
+                'new_values' => $data,
+                'reason' => $data['reason'],
+            ]);
+
+            return $attendance;
+        });
+    }
+
+    /**
+     * Real-time Attendance Stats for Dashboard
+     */
+    public function getRealTimeDashboardStats($companyId = null)
+    {
+        $today = Carbon::today()->toDateString();
+        
+        $userQuery = User::where('status', 1);
+        if ($companyId) {
+            $userQuery->where('company_id', $companyId);
+        }
+        $totalEmployees = $userQuery->count();
+
+        $attQuery = Attendance::where('date', $today);
+        if ($companyId) {
+            $attQuery->whereHas('user', function($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+        }
+        
+        $presentToday = (clone $attQuery)->whereIn('status', [1, 2, 3, 5, 6])->count();
+        $lateToday = (clone $attQuery)->where('status', 2)->count();
+        $activeNow = (clone $attQuery)->whereNotNull('check_in_time')->whereNull('check_out_time')->count();
+
+        return [
+            'total_employees' => $totalEmployees,
+            'present' => $presentToday,
+            'late' => $lateToday,
+            'absent' => max(0, $totalEmployees - $presentToday),
+            'attendance_rate' => $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100) : 0,
+            'active_now' => $activeNow,
+        ];
+    }
+
+    /**
      * Get Paginated All Attendance for Admin
      */
-    public function getAllAttendance($perPage = 15)
+    public function getAllAttendance($perPage = 15, $search = null)
     {
-        return Attendance::with(['user.shift', 'user.department.shift', 'user.branch.shift', 'logs'])
-            ->orderBy('date', 'desc')
-            ->paginate($perPage);
+        $query = Attendance::with(['user.shift', 'user.department.shift', 'user.branch.shift', 'logs']);
+
+        if ($search) {
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%");
+            })->orWhere('date', 'LIKE', "%{$search}%");
+        }
+
+        return $query->orderBy('date', 'desc')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**

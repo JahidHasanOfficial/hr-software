@@ -20,7 +20,7 @@ class DesignationController extends Controller
 
     public function index()
     {
-        $designations = $this->designationService->getAllDesignations(10);
+        $designations = $this->designationService->getAllDesignations(10, request('search'));
         return view('backend.pages.designations.index', compact('designations'));
     }
 

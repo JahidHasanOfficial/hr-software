@@ -20,7 +20,7 @@ class BranchController extends Controller
 
     public function index()
     {
-        $branches = $this->branchService->getAllBranches(10);
+        $branches = $this->branchService->getAllBranches(10, request('search'));
         return view('backend.pages.branches.index', compact('branches'));
     }
 

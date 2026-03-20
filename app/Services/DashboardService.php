@@ -12,11 +12,47 @@ class DashboardService
      */
     public function getStatistics()
     {
+        $attendanceService = app(\App\Services\AttendanceService::class);
+        $user = auth()->user();
+        $companyId = $user->company_id;
+
+        $userQuery = User::query();
+        if ($companyId) {
+            $userQuery->where('company_id', $companyId);
+        }
+
+        // Personal Stats for current logged in user (usually for employees)
+        $personalStats = [
+            'present' => \App\Models\Attendance::where('user_id', $user->id)
+                ->whereMonth('date', date('m'))
+                ->whereYear('date', date('Y'))
+                ->count(),
+            'late' => \App\Models\Attendance::where('user_id', $user->id)
+                ->where('status', 'late')
+                ->whereMonth('date', date('m'))
+                ->whereYear('date', date('Y'))
+                ->count(),
+            'pending_requests' => \App\Models\AttendanceRequest::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->count(),
+        ];
+
+        $myRecentLogs = \App\Models\Attendance::where('user_id', $user->id)
+            ->with('logs')
+            ->latest('date')
+            ->take(5)
+            ->get();
+
         return [
-            'totalUsers' => User::count(),
+            'totalUsers' => (clone $userQuery)->count(),
             'totalRoles' => Role::count(),
-            'totalSalary' => User::sum('salary'),
-            'recentUsers' => User::with('designation')->latest()->take(5)->get(),
+            'totalSalary' => (clone $userQuery)->sum('salary'),
+            'recentUsers' => (clone $userQuery)->with('designation')->latest()->take(5)->get(),
+            'attendanceStats' => $attendanceService->getRealTimeDashboardStats($companyId),
+            'personalStats' => $personalStats,
+            'myRecentLogs' => $myRecentLogs,
         ];
     }
 }
+
+

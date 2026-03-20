@@ -20,7 +20,8 @@ class HelperService
 
     public static function getStatusLabel($status)
     {
-        return $status == 1 ? 'ACTIVE' : 'INACTIVE';
+        $activeMarkers = [1, '1', true, 'active', 'ACTIVE'];
+        return in_array($status, $activeMarkers, true) || $status == 1 ? 'ACTIVE' : 'INACTIVE';
     }
 
     public static function getStatusBadge($status)

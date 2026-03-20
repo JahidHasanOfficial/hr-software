@@ -22,9 +22,12 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="card-title">Employee Shifts</h4>
-                    <a href="{{ route('shifts.create') }}" class="btn btn-gradient-primary btn-fw">Add Shift</a>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <h4 class="card-title mb-0">Employee Shifts</h4>
+                    <div class="d-flex align-items-center flex-grow-1 justify-content-end">
+                        @include('backend.components.search_box', ['action' => route('shifts.index'), 'placeholder' => 'Search shifts...'])
+                        <a href="{{ route('shifts.create') }}" class="btn btn-gradient-primary btn-sm btn-fw ml-2">Add Shift</a>
+                    </div>
                 </div>
                 
                 @if(session('success'))
@@ -57,16 +60,14 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <label class="badge {{ $shift->status == 'active' ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ strtoupper($shift->status) }}
-                                    </label>
+                                    {!! \App\Services\HelperService::getStatusBadge($shift->status) !!}
                                 </td>
                                 <td>
-                                    <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-sm btn-gradient-warning">Edit</a>
+                                    <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-sm btn-gradient-warning p-2" title="Edit"><i class="mdi mdi-pencil"></i></a>
                                     <form action="{{ route('shifts.destroy', $shift->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-gradient-danger" onclick="return confirm('Delete shift?')">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-gradient-danger p-2" title="Delete" onclick="return confirm('Delete shift?')"><i class="mdi mdi-delete"></i></button>
                                     </form>
                                 </td>
                             </tr>

@@ -75,12 +75,22 @@ class User extends Authenticatable
 
     /**
      * Get the effective shift for the user based on hierarchy:
-     * 1. Individual User Shift
-     * 2. Department Shift
-     * 3. Branch Shift
+     * 1. Roster (Specific date scheduling)
+     * 2. Individual User Shift (Permanent)
+     * 3. Department Shift
+     * 4. Branch Shift
      */
-    public function getEffectiveShift()
+    public function getEffectiveShift($date = null)
     {
+        $date = $date ?: now()->toDateString();
+
+        // 1. Check Roster
+        $roster = $this->rosters()->where('date', $date)->first();
+        if ($roster) {
+            return $roster->shift;
+        }
+
+        // 2. Fallbacks
         if ($this->shift_id) {
             return $this->shift;
         }
@@ -99,6 +109,16 @@ class User extends Authenticatable
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function rosters()
+    {
+        return $this->hasMany(Roster::class);
+    }
+
+    public function attendanceRequests()
+    {
+        return $this->hasMany(AttendanceRequest::class);
     }
 
     /**

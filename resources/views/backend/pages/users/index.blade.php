@@ -22,9 +22,12 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="card-title">User List</h4>
-                    <a href="{{ route('users.create') }}" class="btn btn-gradient-primary btn-fw">Add User</a>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <h4 class="card-title mb-0">User List</h4>
+                    <div class="d-flex align-items-center flex-grow-1 justify-content-end">
+                        @include('backend.components.search_box', ['action' => route('users.index'), 'placeholder' => 'Search name, email...'])
+                        <a href="{{ route('users.create') }}" class="btn btn-gradient-primary btn-sm btn-fw ml-2">Add Member</a>
+                    </div>
                 </div>
                 
                 @if(session('success'))
@@ -82,12 +85,12 @@
                                     {!! \App\Services\HelperService::getStatusBadge($user->status) !!}
                                 </td>
                                 <td>
-                                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-gradient-info mb-1">View</a>
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-gradient-warning mb-1">Edit</a>
+                                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-gradient-info p-2" title="View"><i class="mdi mdi-eye"></i></a>
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-gradient-warning p-2" title="Edit"><i class="mdi mdi-pencil"></i></a>
                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-gradient-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-gradient-danger p-2" title="Delete" onclick="return confirm('Are you sure?')"><i class="mdi mdi-delete"></i></button>
                                     </form>
                                 </td>
                             </tr>

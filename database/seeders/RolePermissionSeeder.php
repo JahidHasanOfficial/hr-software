@@ -53,6 +53,18 @@ class RolePermissionSeeder extends Seeder
             
             // Profile
             'profile.edit', 'profile.update', 'profile.destroy',
+
+            // New Attendance Rules & Features
+            'holiday.index', 'holiday.create', 'holiday.store', 'holiday.edit', 'holiday.update', 'holiday.destroy',
+            'weekly_off.index', 'weekly_off.create', 'weekly_off.store', 'weekly_off.edit', 'weekly_off.update', 'weekly_off.destroy',
+            'roster.index', 'roster.create', 'roster.store', 'roster.edit', 'roster.update', 'roster.destroy',
+            'attendance_request.index', 'attendance_request.create', 'attendance_request.store', 'attendance_request.approve', 'attendance_request.reject',
+
+            // New Granular Dashboard Card Permissions
+            'dashboard.real_time_overview',
+            'dashboard.statistics_cards',
+            'dashboard.recent_employees',
+            'dashboard.employee_personal_stats',
         ];
 
         // Create Permissions
@@ -78,24 +90,35 @@ class RolePermissionSeeder extends Seeder
             'attendance management',
             'shift.index', 'shift.create', 'shift.store', 'shift.edit', 'shift.update', 'shift.destroy',
             'attendance.index', 'attendance.check_in', 'attendance.check_out', 'attendance.logs',
+            'holiday.index', 'holiday.create', 'holiday.store', 'holiday.edit', 'holiday.update', 'holiday.destroy',
+            'weekly_off.index', 'weekly_off.create', 'weekly_off.store', 'weekly_off.edit', 'weekly_off.update', 'weekly_off.destroy',
+            'roster.index', 'roster.create', 'roster.store', 'roster.edit', 'roster.update', 'roster.destroy',
+            'attendance_request.index', 'attendance_request.create', 'attendance_request.store', 'attendance_request.approve', 'attendance_request.reject',
             'payroll management',
             'leave management',
+            'dashboard.real_time_overview',
+            'dashboard.statistics_cards',
+            'dashboard.recent_employees',
         ]);
 
         // 3. Employee
         $employeeRole = Role::findOrCreate('Employee');
         $employeeRole->syncPermissions([
             'dashboard access',
+            'dashboard.employee_personal_stats',
             'attendance.check_in', 
             'attendance.check_out', 
             'attendance.logs',
+            'roster.index', 
+            'attendance_request.index', 
+            'attendance_request.create',
             'profile.edit',
             'profile.update',
         ]);
 
         // --- Users ---
         $admin = User::updateOrCreate(
-            ['email' => 'admin@hrsoftware.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Super Admin', 
                 'password' => Hash::make('password'), 
@@ -106,7 +129,7 @@ class RolePermissionSeeder extends Seeder
         $admin->syncRoles([$adminRole]);
 
         $hr = User::updateOrCreate(
-            ['email' => 'hr@hrsoftware.com'],
+            ['email' => 'hr@gmail.com'],
             [
                 'name' => 'HR Manager', 
                 'password' => Hash::make('password'), 

@@ -52,13 +52,14 @@
                             $todayAttendance = \App\Models\Attendance::where('user_id', Auth::id())
                                 ->where('date', date('Y-m-d'))
                                 ->first();
+                            $hasCheckIn = $todayAttendance && $todayAttendance->logs->where('type', 'check_in')->isNotEmpty();
                         @endphp
 
                         <div id="location-error" class="alert alert-danger" style="display:none; text-align:left;">
                             Mock location detected or location blocked! Attendance denied.
                         </div>
 
-                        @if(!$todayAttendance)
+                        @if(!$hasCheckIn)
                             @can('attendance.check_in')
                             <form action="{{ route('attendances.check_in') }}" method="POST" id="checkInForm">
                                 @csrf
@@ -105,9 +106,61 @@
     </div>
 </div>
 
+@can('dashboard.real_time_overview')
+<div class="row">
+    <!-- Real-time Attendance Stats (Modern Section) -->
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Today's Real-time Overview</h4>
+                <div class="row text-center">
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-primary">
+                            <p class="text-muted small font-weight-bold mb-1">TOTAL STAFF</p>
+                            <h3 class="text-primary mb-0">{{ $attendanceStats['total_employees'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-success">
+                            <p class="text-muted small font-weight-bold mb-1">PRESENT</p>
+                            <h3 class="text-success mb-0">{{ $attendanceStats['present'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-warning">
+                            <p class="text-muted small font-weight-bold mb-1">LATE TODAY</p>
+                            <h3 class="text-warning mb-0">{{ $attendanceStats['late'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-danger">
+                            <p class="text-muted small font-weight-bold mb-1">ABSENT</p>
+                            <h3 class="text-danger mb-0">{{ $attendanceStats['absent'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-info">
+                            <p class="text-muted small font-weight-bold mb-1">REAL-TIME RATE</p>
+                            <h3 class="text-info mb-0">{{ $attendanceStats['attendance_rate'] }}%</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-dark">
+                            <p class="text-muted small font-weight-bold mb-1">ACTIVE NOW</p>
+                            <h3 class="text-dark mb-0">{{ $attendanceStats['active_now'] }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endcan
+
+@can('dashboard.statistics_cards')
 <div class="row">
     <div class="col-md-4 stretch-card grid-margin">
-        <div class="card bg-gradient-danger card-img-holder text-white">
+        <div class="card bg-gradient-danger card-img-holder text-white shadow">
             <div class="card-body">
                 <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
                 <h4 class="font-weight-normal mb-3">Total Employees
@@ -119,7 +172,7 @@
         </div>
     </div>
     <div class="col-md-4 stretch-card grid-margin">
-        <div class="card bg-gradient-info card-img-holder text-white">
+        <div class="card bg-gradient-info card-img-holder text-white shadow">
             <div class="card-body">
                 <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>                  
                 <h4 class="font-weight-normal mb-3">Account Roles
@@ -131,7 +184,7 @@
         </div>
     </div>
     <div class="col-md-4 stretch-card grid-margin">
-        <div class="card bg-gradient-success card-img-holder text-white">
+        <div class="card bg-gradient-success card-img-holder text-white shadow">
             <div class="card-body">
                 <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>                                    
                 <h4 class="font-weight-normal mb-3">Total Monthly Payroll
@@ -143,7 +196,104 @@
         </div>
     </div>
 </div>
+@endcan
 
+@can('dashboard.employee_personal_stats')
+<div class="row">
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-success card-img-holder text-white shadow">
+            <div class="card-body">
+                <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
+                <h4 class="font-weight-normal mb-3">My Presence ({{ date('F') }})
+                    <i class="mdi mdi-check-circle mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ $personalStats['present'] }} Days</h2>
+                <h6 class="card-text">Total office presence this month</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-warning card-img-holder text-white shadow">
+            <div class="card-body">
+                <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
+                <h4 class="font-weight-normal mb-3">Late Records
+                    <i class="mdi mdi-clock-alert mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ $personalStats['late'] }} Times</h2>
+                <h6 class="card-text">Punctuality tracking</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-info card-img-holder text-white shadow">
+            <div class="card-body">
+                <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
+                <h4 class="font-weight-normal mb-3">Pending Requests
+                    <i class="mdi mdi-file-document mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ $personalStats['pending_requests'] }}</h2>
+                <h6 class="card-text">Waiting for approval</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">My Recent Activity</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="text-center text-primary">
+                            <tr>
+                                <th> Date </th>
+                                <th> Check-In </th>
+                                <th> Check-Out </th>
+                                <th> Status </th>
+                                <th> Total Hours </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($myRecentLogs as $att)
+                            <tr class="text-center">
+                                <td class="font-weight-bold"> {{ \App\Services\HelperService::formatDate($att->date) }} </td>
+                                <td> 
+                                    @php $checkIn = $att->logs->where('type', 'check_in')->first(); @endphp
+                                    <span class="text-success">{{ $checkIn ? \App\Services\HelperService::formatTime($checkIn->time) : '--:--' }}</span>
+                                </td>
+                                <td>
+                                    @php $checkOut = $att->logs->where('type', 'check_out')->last(); @endphp
+                                    <span class="text-danger">{{ $checkOut ? \App\Services\HelperService::formatTime($checkOut->time) : '--:--' }}</span>
+                                </td>
+                                <td>
+                                    @if($att->status == 'present')
+                                        <label class="badge badge-gradient-success">PRESENT</label>
+                                    @elseif($att->status == 'late')
+                                        <label class="badge badge-gradient-warning">LATE</label>
+                                    @else
+                                        <label class="badge badge-gradient-danger">ABSENT</label>
+                                    @endif
+                                </td>
+                                <td> 
+                                    <span class="font-weight-bold text-dark">{{ $att->total_hours ?? '0.00' }}</span> <small>hrs</small>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted p-4 italic">No attendance records found for this period.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endcan
+
+@can('dashboard.recent_employees')
 <div class="row">
     <div class="col-12 grid-margin">
         <div class="card">
@@ -186,6 +336,7 @@
         </div>
     </div>
 </div>
+@endcan
 
 @push('scripts')
 <script>

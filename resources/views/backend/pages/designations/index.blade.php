@@ -22,9 +22,12 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="card-title">Designation List</h4>
-                    <a href="{{ route('designations.create') }}" class="btn btn-gradient-primary btn-fw">Add Pos</a>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <h4 class="card-title mb-0">Designation List</h4>
+                    <div class="d-flex align-items-center flex-grow-1 justify-content-end">
+                        @include('backend.components.search_box', ['action' => route('designations.index'), 'placeholder' => 'Search designation...'])
+                        <a href="{{ route('designations.create') }}" class="btn btn-gradient-primary btn-sm btn-fw ml-2">Add Pos</a>
+                    </div>
                 </div>
                 
                 @if(session('success'))
@@ -49,16 +52,14 @@
                                 <td>{{ $desig->department->name }} ({{ $desig->department->branch->name }})</td>
                                 <td>{{ $desig->name }}</td>
                                 <td>
-                                    <label class="badge {{ $desig->status == 'active' ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ strtoupper($desig->status) }}
-                                    </label>
+                                    {!! \App\Services\HelperService::getStatusBadge($desig->status) !!}
                                 </td>
                                 <td>
-                                    <a href="{{ route('designations.edit', $desig->id) }}" class="btn btn-sm btn-gradient-warning">Edit</a>
+                                    <a href="{{ route('designations.edit', $desig->id) }}" class="btn btn-sm btn-gradient-warning p-2" title="Edit"><i class="mdi mdi-pencil"></i></a>
                                     <form action="{{ route('designations.destroy', $desig->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-gradient-danger" onclick="return confirm('Delete designation?')">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-gradient-danger p-2" title="Delete" onclick="return confirm('Delete designation?')"><i class="mdi mdi-delete"></i></button>
                                     </form>
                                 </td>
                             </tr>

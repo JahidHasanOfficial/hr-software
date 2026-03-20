@@ -53,6 +53,18 @@
   <script src="{{ asset('backend/js/dashboard.js') }}"></script>
   <!-- End custom js for this page-->
   @stack('scripts')
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let searchInput = document.querySelector('input[name="search"]');
+        if (searchInput && searchInput.value !== "") {
+            // Focus and move cursor to end
+            let val = searchInput.value;
+            searchInput.value = '';
+            searchInput.focus();
+            searchInput.value = val;
+        }
+    });
+  </script>
 </body>
 
 </html>

@@ -11,9 +11,14 @@ class BranchService
     /**
      * Get Paginated Branches
      */
-    public function getAllBranches($perPage = 10)
+    public function getAllBranches($perPage = 10, $search = null)
     {
-        return Branch::with(['company', 'shift'])->latest()->paginate($perPage);
+        $query = Branch::with(['company', 'shift']);
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+        }
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     /**

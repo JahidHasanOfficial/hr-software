@@ -10,6 +10,11 @@ use App\Http\Controllers\Backend\DepartmentController;
 use App\Http\Controllers\Backend\DesignationController;
 use App\Http\Controllers\Backend\ShiftController;
 use App\Http\Controllers\Backend\AttendanceController;
+use App\Http\Controllers\Backend\HolidayController;
+use App\Http\Controllers\Backend\WeeklyOffController;
+use App\Http\Controllers\Backend\RosterController;
+use App\Http\Controllers\Backend\AttendanceRequestController;
+use App\Http\Controllers\Backend\AttendanceManualLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,7 +24,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard')
-        ->middleware('permission:dashboard access');
+        ->middleware('permission:dashboard access|dashboard.real_time_overview|dashboard.statistics_cards|dashboard.recent_employees');
 
     /**
      * User Management
@@ -104,6 +109,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Attendance Tracking Overview
         Route::get('/admin/attendances', [AttendanceController::class, 'index'])->name('attendances.index')->middleware('permission:attendance.index');
+
+        // Professional Attendance Features
+        Route::resource('/admin/holidays', HolidayController::class)->middleware('permission:holiday.index');
+        Route::resource('/admin/weekly-offs', WeeklyOffController::class)->middleware('permission:weekly_off.index');
+        Route::resource('/admin/rosters', RosterController::class)->middleware('permission:roster.index');
+        Route::get('/admin/attendance-requests', [AttendanceRequestController::class, 'index'])->name('attendance-requests.index')->middleware('permission:attendance_request.index');
+        Route::get('/admin/attendance-manual-logs', [AttendanceManualLogController::class, 'index'])->name('attendance-manual-logs.index')->middleware('permission:attendance_manual_log.index');
     });
 });
 

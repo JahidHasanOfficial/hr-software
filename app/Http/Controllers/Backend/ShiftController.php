@@ -21,7 +21,7 @@ class ShiftController extends Controller
 
     public function index()
     {
-        $shifts = $this->shiftService->getAllShifts(10);
+        $shifts = $this->shiftService->getAllShifts(10, request('search'));
         return view('backend.pages.shifts.index', compact('shifts'));
     }
 

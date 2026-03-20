@@ -55,12 +55,12 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-gradient-warning mb-1">Edit</a>
+                                    <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-gradient-warning p-2" title="Edit"><i class="mdi mdi-pencil"></i></a>
                                     @if($role->name !== 'Admin')
                                     <form action="{{ route('roles.destroy', $role->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-gradient-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-gradient-danger p-2" title="Delete" onclick="return confirm('Are you sure?')"><i class="mdi mdi-delete"></i></button>
                                     </form>
                                     @endif
                                 </td>
