@@ -44,6 +44,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Designation</th>
+                                <th>Office Shift</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -64,6 +65,14 @@
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone ?? 'N/A' }}</td>
                                 <td>{{ $user->designation->name ?? 'N/A' }}</td>
+                                <td>
+                                    @php $sh = $user->getEffectiveShift(); @endphp
+                                    @if($sh)
+                                        <span class="text-primary small font-weight-bold">{{ $sh->name }}</span>
+                                    @else
+                                        <span class="text-muted small italic">Not Set</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @foreach($user->roles as $role)
                                         <label class="badge badge-gradient-info text-dark">{{ $role->name }}</label>

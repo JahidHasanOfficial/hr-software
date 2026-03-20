@@ -40,7 +40,8 @@
                                 <th>Branch Name</th>
                                 <th>Location</th>
                                 <th>Email/Phone</th>
-                                <th>Status</th>
+                                <th>Default Shift</th>
+                                <th class="text-center">Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -48,13 +49,16 @@
                             @foreach($branches as $branch)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $branch->company->name }}</td>
+                                <td>{{ $branch->company->name ?? '-' }}</td>
                                 <td>{{ $branch->name }}</td>
                                 <td>{{ $branch->location ?? 'N/A' }}</td>
                                 <td>{{ $branch->email }} <br> {{ $branch->phone }}</td>
                                 <td>
-                                    <label class="badge {{ $branch->status == 'active' ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ strtoupper($branch->status) }}
+                                    {{ $branch->shift ? $branch->shift->name : 'NONE' }}
+                                </td>
+                                <td class="text-center">
+                                    <label class="badge {{ $branch->status == 1 ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
+                                        {{ $branch->status == 1 ? 'ACTIVE' : 'INACTIVE' }}
                                     </label>
                                 </td>
                                 <td>

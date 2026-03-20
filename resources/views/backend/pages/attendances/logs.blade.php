@@ -29,6 +29,7 @@
                         <thead>
                             <tr class="bg-light">
                                 <th>Date</th>
+                                <th>Shift</th>
                                 <th>First In</th>
                                 <th>Late</th>
                                 <th>Last Out</th>
@@ -41,6 +42,10 @@
                             @forelse($logs as $log)
                             <tr>
                                 <td>{{ \App\Services\HelperService::formatDate($log->date) }}</td>
+                                <td>
+                                    @php $shft = $log->user->getEffectiveShift(); @endphp
+                                    {{ $shft ? \App\Services\HelperService::formatTime($shft->start_time).' - '.\App\Services\HelperService::formatTime($shft->end_time) : '-' }}
+                                </td>
                                 <td class="text-success font-weight-bold">{{ \App\Services\HelperService::formatTime($log->check_in_time) }}</td>
                                 <td>
                                     @if($log->late_minutes > 0)

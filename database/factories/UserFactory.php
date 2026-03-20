@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Designation;
+use App\Models\Shift;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -35,6 +36,7 @@ class UserFactory extends Factory
             'branch_id' => $designation->department->branch_id,
             'department_id' => $designation->department_id,
             'designation_id' => $designation->id,
+            'shift_id' => Shift::inRandomOrder()->first()->id ?? null,
             'status' => 1,
             'joining_date' => fake()->date(),
             'salary' => fake()->randomFloat(2, 3000, 15000),

@@ -11,7 +11,11 @@ class Attendance extends Model
 
     protected $fillable = [
         'user_id', 
+        'shift_id',
         'date', 
+        'in_geofence',
+        'device_info',
+        'is_auto_checkout',
         'check_in_time', 
         'check_in_latitude', 
         'check_in_longitude', 
@@ -31,6 +35,11 @@ class Attendance extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
     }
 
     public function logs()

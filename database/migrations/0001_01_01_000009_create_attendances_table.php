@@ -14,7 +14,13 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $blueprint) {
             $blueprint->id();
             $blueprint->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $blueprint->foreignId('shift_id')->nullable()->constrained()->nullOnDelete();
             $blueprint->date('date');
+            
+            // Context info
+            $blueprint->boolean('in_geofence')->default(false);
+            $blueprint->string('device_info')->nullable();
+            $blueprint->boolean('is_auto_checkout')->default(false);
             
             // Check-in info
             $blueprint->time('check_in_time')->nullable();

@@ -43,11 +43,13 @@ class AttendanceService
 
                 $attendance = Attendance::create([
                     'user_id' => $user->id,
+                    'shift_id' => $shift ? $shift->id : null,
                     'date' => $today,
                     'check_in_time' => $currentTime->toTimeString(),
                     'check_in_latitude' => $data['latitude'] ?? null,
                     'check_in_longitude' => $data['longitude'] ?? null,
                     'check_in_ip' => $data['ip'] ?? null,
+                    'device_info' => request()->header('User-Agent'),
                     'late_minutes' => $lateMinutes,
                     'status' => $status,
                 ]);
@@ -94,25 +96,43 @@ class AttendanceService
 
             // Final Stats Calculation
             $checkinTime = Carbon::parse($today . ' ' . $attendance->check_in_time);
-            $stayMinutes = $checkinTime->diffInMinutes($checkoutTime);
+            $totalMinutes = $checkinTime->diffInMinutes($checkoutTime);
             
-            $shift = $user->getEffectiveShift();
+            $shift = $attendance->shift; // Use the shift stored at check-in
+            if (!$shift) {
+                $shift = $user->getEffectiveShift();
+            }
+
             $earlyLeavingMinutes = 0;
             $overtimeMinutes = 0;
+            $stayMinutes = $totalMinutes;
 
             if ($shift && !$shift->is_flexible) {
                 $shiftEndTime = Carbon::parse($today . ' ' . $shift->end_time);
                 
                 // Early Leaving
                 if ($checkoutTime->lt($shiftEndTime)) {
-                    $earlyLeavingMinutes = $checkoutTime->diffInMinutes($shiftEndTime);
+                    $diff = $checkoutTime->diffInMinutes($shiftEndTime);
+                    if ($diff > $shift->early_checkout_threshold) {
+                        $earlyLeavingMinutes = $diff;
+                    }
                 } 
                 // Overtime
                 elseif ($checkoutTime->gt($shiftEndTime)) {
                     $overtimeMinutes = $shiftEndTime->diffInMinutes($checkoutTime);
                 }
+
+                // Deduct break time if stay is longer than break time
+                if ($stayMinutes > ($shift->break_time + 60)) {
+                    $stayMinutes -= $shift->break_time;
+                }
+
+                // Check for Half Day
+                if ($stayMinutes < $shift->half_day_threshold) {
+                    $attendance->status = 3; // Half Day
+                }
             } else {
-                // For flexible shifts, maybe OT is after 9 hours
+                // For flexible shifts, maybe OT is after 9 hours (540 mins)
                 if ($stayMinutes > 540) {
                     $overtimeMinutes = $stayMinutes - 540;
                 }
@@ -126,6 +146,7 @@ class AttendanceService
                 'stay_minutes' => $stayMinutes,
                 'early_leaving_minutes' => $earlyLeavingMinutes,
                 'overtime_minutes' => $overtimeMinutes,
+                'status' => $attendance->status, // Might have changed to Half Day
             ]);
 
             return $attendance;
@@ -138,7 +159,7 @@ class AttendanceService
     public function getAllAttendance($perPage = 15)
     {
         return Attendance::with(['user.shift', 'user.department.shift', 'user.branch.shift', 'logs'])
-            ->latest()
+            ->orderBy('date', 'desc')
             ->paginate($perPage);
     }
 
@@ -149,7 +170,7 @@ class AttendanceService
     {
         return Attendance::where('user_id', $userId)
             ->with(['logs', 'user.shift', 'user.department.shift', 'user.branch.shift'])
-            ->latest()
+            ->orderBy('date', 'desc')
             ->paginate($perPage);
     }
 }

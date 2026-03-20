@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use App\Models\Shift;
 use Illuminate\Support\Facades\Hash;
 
 class RolePermissionSeeder extends Seeder
@@ -95,13 +96,23 @@ class RolePermissionSeeder extends Seeder
         // --- Users ---
         $admin = User::updateOrCreate(
             ['email' => 'admin@hrsoftware.com'],
-            ['name' => 'Super Admin', 'password' => Hash::make('password'), 'status' => 1]
+            [
+                'name' => 'Super Admin', 
+                'password' => Hash::make('password'), 
+                'status' => 1,
+                'shift_id' => Shift::inRandomOrder()->first()->id ?? null
+            ]
         );
         $admin->syncRoles([$adminRole]);
 
         $hr = User::updateOrCreate(
             ['email' => 'hr@hrsoftware.com'],
-            ['name' => 'HR Manager', 'password' => Hash::make('password'), 'status' => 1]
+            [
+                'name' => 'HR Manager', 
+                'password' => Hash::make('password'), 
+                'status' => 1,
+                'shift_id' => Shift::inRandomOrder()->first()->id ?? null
+            ]
         );
         $hr->syncRoles([$hrManagerRole]);
     }

@@ -38,7 +38,8 @@
                                 <th>#</th>
                                 <th>Company > Branch</th>
                                 <th>Department Name</th>
-                                <th>Status</th>
+                                <th>Default Shift</th>
+                                <th class="text-center">Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -46,11 +47,14 @@
                             @foreach($departments as $dept)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $dept->branch->company->name }} > {{ $dept->branch->name }}</td>
-                                <td>{{ $dept->name }}</td>
+                                <td>{{ $dept->branch->company->name ?? '-' }} > {{ $dept->branch->name ?? '-' }}</td>
+                                <td class="font-weight-bold">{{ $dept->name }}</td>
                                 <td>
-                                    <label class="badge {{ $dept->status == 'active' ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
-                                        {{ strtoupper($dept->status) }}
+                                    {{ $dept->shift ? $dept->shift->name : 'NONE' }}
+                                </td>
+                                <td class="text-center">
+                                    <label class="badge {{ $dept->status == 1 ? 'badge-gradient-success' : 'badge-gradient-danger' }}">
+                                        {{ $dept->status == 1 ? 'ACTIVE' : 'INACTIVE' }}
                                     </label>
                                 </td>
                                 <td>

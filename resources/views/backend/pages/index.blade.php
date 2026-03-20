@@ -35,12 +35,13 @@
                                 <h2 id="live-time" class="text-dark font-weight-bold mb-0">00:00:00 AM</h2>
                                 <p class="text-muted small mb-0">{{ date('l, d M Y') }}</p>
                             </div>
-                            @if(Auth::user()->shift)
+                            @php $effectiveShift = Auth::user()->getEffectiveShift(); @endphp
+                            @if($effectiveShift)
                                 <div class="border-left pl-3">
-                                    <p class="mb-0 text-primary small">Your Shift</p>
+                                    <p class="mb-0 text-primary small">Office Time</p>
                                     <p class="font-weight-bold mb-0">
-                                        {{ Auth::user()->shift->name }} <br>
-                                        ({{ \App\Services\HelperService::formatTime(Auth::user()->shift->start_time) }} - {{ \App\Services\HelperService::formatTime(Auth::user()->shift->end_time) }})
+                                        {{ $effectiveShift->name }} <br>
+                                        ({{ \App\Services\HelperService::formatTime($effectiveShift->start_time) }} - {{ \App\Services\HelperService::formatTime($effectiveShift->end_time) }})
                                     </p>
                                 </div>
                             @endif

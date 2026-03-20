@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Company;
+use App\Models\Shift;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class BranchFactory extends Factory
     {
         return [
             'company_id' => Company::factory(),
+            'shift_id' => Shift::inRandomOrder()->first()->id ?? null,
             'name' => $this->faker->city() . ' Branch',
             'location' => $this->faker->address(),
             'email' => $this->faker->unique()->safeEmail(),

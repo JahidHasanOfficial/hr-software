@@ -17,6 +17,9 @@ return new class extends Migration
             $blueprint->time('start_time');
             $blueprint->time('end_time');
             $blueprint->integer('late_threshold')->default(15); // in minutes
+            $blueprint->integer('early_checkout_threshold')->default(15); // in minutes
+            $blueprint->integer('break_time')->default(60); // lunch break in minutes
+            $blueprint->integer('half_day_threshold')->default(240); // min minutes for half day
             $blueprint->boolean('is_flexible')->default(false);
             $blueprint->tinyInteger('status')->default(1);
             $blueprint->timestamps();
