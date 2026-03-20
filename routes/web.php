@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\WeeklyOffController;
 use App\Http\Controllers\Backend\RosterController;
 use App\Http\Controllers\Backend\AttendanceRequestController;
 use App\Http\Controllers\Backend\AttendanceManualLogController;
+use App\Http\Controllers\Backend\AttendanceReportController;
 use App\Http\Controllers\Backend\LeaveController;
 use App\Http\Controllers\Backend\LeaveTypeController;
 use Illuminate\Support\Facades\Route;
@@ -101,6 +102,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
      * Attendance Management (Admin/HR only)
      */
     Route::middleware('permission:attendance management')->group(function() {
+        // Attendance Corrections & Exports
+        Route::post('/admin/attendances/manual-correction', [AttendanceController::class, 'storeManualCorrection'])->name('attendances.manual_correction')->middleware('permission:attendance.correction');
+        Route::get('/admin/attendances/export', [AttendanceController::class, 'exportCsv'])->name('attendances.export')->middleware('permission:attendance.export');
+
         // Shift Management
         Route::get('/admin/shifts', [ShiftController::class, 'index'])->name('shifts.index')->middleware('permission:shift.index');
         Route::get('/admin/shifts/create', [ShiftController::class, 'create'])->name('shifts.create')->middleware('permission:shift.create');
@@ -156,6 +161,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/leaves/{id}/reject', [LeaveController::class, 'reject'])->name('leaves.reject')->middleware('permission:leave.reject');
     // Leave Balances       
     Route::get('/admin/leave-balances', [LeaveController::class, 'balances'])->name('leaves.balances')->middleware('permission:leave_type.index');
+    // Attendance Reports
+    Route::get('/admin/reports/attendance/summary', [AttendanceReportController::class, 'summary'])->name('reports.attendance.summary')->middleware('permission:attendance.report');
+    Route::get('/admin/reports/attendance/detailed', [AttendanceReportController::class, 'detailed'])->name('reports.attendance.detailed')->middleware('permission:attendance.report');
 });
 
 Route::middleware('auth')->group(function () {

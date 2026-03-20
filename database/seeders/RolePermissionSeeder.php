@@ -69,6 +69,9 @@ class RolePermissionSeeder extends Seeder
             // New Leave Management Permissions
             'leave_type.index', 'leave_type.create', 'leave_type.store', 'leave_type.edit', 'leave_type.update', 'leave_type.destroy',
             'leave.index', 'leave.create', 'leave.store', 'leave.show', 'leave.edit', 'leave.update', 'leave.destroy', 'leave.approve', 'leave.reject',
+
+            // Professional Attendance Reporting
+            'attendance.report', 'attendance.export', 'attendance.correction',
         ];
 
         // Create Permissions
@@ -106,6 +109,7 @@ class RolePermissionSeeder extends Seeder
             // Leave Management HR
             'leave_type.index', 'leave_type.create', 'leave_type.store', 'leave_type.edit', 'leave_type.update', 'leave_type.destroy',
             'leave.index', 'leave.show', 'leave.approve', 'leave.reject',
+            'attendance.report', 'attendance.export', 'attendance.correction',
         ]);
 
         // 3. Employee

@@ -308,4 +308,69 @@ class AttendanceService
             ->orderBy('date', 'desc')
             ->paginate($perPage);
     }
+
+    /**
+     * Get Detailed Attendance Report with Summary
+     */
+    public function getAttendanceReport($filters = [])
+    {
+        $startDate = $filters['start_date'] ?? date('Y-m-01');
+        $endDate = $filters['end_date'] ?? date('Y-m-d');
+        
+        $userQuery = User::where('status', 1)->with(['department', 'branch']);
+        
+        if (!empty($filters['user_id'])) $userQuery->where('id', $filters['user_id']);
+        if (!empty($filters['department_id'])) $userQuery->where('department_id', $filters['department_id']);
+        if (!empty($filters['branch_id'])) $userQuery->where('branch_id', $filters['branch_id']);
+        
+        $users = $userQuery->get();
+        $reportData = [];
+
+        foreach ($users as $user) {
+            $attendanceRecords = Attendance::where('user_id', $user->id)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->get();
+            
+            $approvedLeaves = \App\Models\Leave::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->where(function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('start_date', [$startDate, $endDate])
+                      ->orWhereBetween('end_date', [$startDate, $endDate])
+                      ->orWhere(function($sub) use ($startDate, $endDate) {
+                          $sub->where('start_date', '<=', $startDate)->where('end_date', '>=', $endDate);
+                      });
+                })->get();
+
+            $presentCount = $attendanceRecords->whereIn('status', [1, 5, 6])->count();
+            $lateCount = $attendanceRecords->where('status', 2)->count();
+            $leaveDays = 0;
+            
+            // Calculate actual leave days within the range
+            $period = \Carbon\CarbonPeriod::create($startDate, $endDate);
+            foreach ($period as $dateString) {
+                $d = $dateString->format('Y-m-d');
+                $onLeave = $approvedLeaves->contains(function($l) use ($d) {
+                    return $d >= $l->start_date && $d <= $l->end_date;
+                });
+                if ($onLeave) $leaveDays += 1;
+            }
+
+            $totalTargetDays = count($period);
+            $absentCount = max(0, $totalTargetDays - ($presentCount + $lateCount + $leaveDays));
+
+            $reportData[] = [
+                'user' => $user,
+                'summary' => [
+                    'present' => $presentCount + $lateCount, // Total work days
+                    'late' => $lateCount,
+                    'leave' => $leaveDays,
+                    'absent' => $absentCount,
+                    'total' => $totalTargetDays
+                ],
+                'details' => $attendanceRecords
+            ];
+        }
+
+        return $reportData;
+    }
 }

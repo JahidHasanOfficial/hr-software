@@ -22,9 +22,20 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-                    <h4 class="card-title mb-0">Daily Presence Logs</h4>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 text-right">
+                    <h4 class="card-title mb-0 text-left">Daily Presence Logs</h4>
                     <div class="d-flex align-items-center flex-grow-1 justify-content-end">
+                        @can('attendance.export')
+                        <a href="{{ route('attendances.export') }}" class="btn btn-sm btn-gradient-info mr-2">
+                            <i class="mdi mdi-download"></i> CSV
+                        </a>
+                        @endcan
+
+                        @can('attendance.correction')
+                        <button type="button" class="btn btn-sm btn-gradient-danger mr-2" data-toggle="modal" data-target="#manualCorrectionModal">
+                            <i class="mdi mdi-pencil-box-outline"></i> Correct Attendance
+                        </button>
+                        @endcan
                         @include('backend.components.search_box', ['action' => route('attendances.index'), 'placeholder' => 'Search by name or date...'])
                     </div>
                 </div>
@@ -171,4 +182,78 @@
         </div>
     </div>
 </div>
+
+@can('attendance.correction')
+<!-- Manual Correction Modal -->
+<div class="modal fade" id="manualCorrectionModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-danger text-white">
+                <h5 class="modal-title">Manual Attendance Correction</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('attendances.manual_correction') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Employee <span class="text-danger">*</span></label>
+                        <select name="user_id" class="form-control" required>
+                            <option value="">Select Employee</option>
+                            @php $allUsers = \App\Models\User::where('status', 1)->orderBy('name')->get(); @endphp
+                            @foreach($allUsers as $u)
+                                <option value="{{ $u->id }}">{{ $u->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 text-left">
+                            <div class="form-group">
+                                <label>Date <span class="text-danger">*</span></label>
+                                <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-left">
+                            <div class="form-group">
+                                <label>Status <span class="text-danger">*</span></label>
+                                <select name="status" class="form-control" required>
+                                    <option value="1">Present</option>
+                                    <option value="2">Late</option>
+                                    <option value="3">Half Day</option>
+                                    <option value="4">Leave</option>
+                                    <option value="5">Holiday</option>
+                                    <option value="6">Weekly Off</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 text-left">
+                            <div class="form-group">
+                                <label>In Time</label>
+                                <input type="time" name="check_in_time" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-left">
+                            <div class="form-group">
+                                <label>Out Time</label>
+                                <input type="time" name="check_out_time" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label>Reason/Note <span class="text-danger">*</span></label>
+                        <textarea name="reason" class="form-control" rows="3" placeholder="Why is this being corrected?" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-gradient-danger">Save Correction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endcan
 @endsection

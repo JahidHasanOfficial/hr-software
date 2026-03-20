@@ -146,5 +146,20 @@
           </li>
           @endcan
 
+          @can('attendance.report')
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#report-menu" aria-expanded="false" aria-controls="report-menu">
+              <span class="menu-title">Attendance Reports</span>
+              <i class="menu-arrow"></i>
+              <i class="mdi mdi-chart-areaspline menu-icon"></i>
+            </a>
+            <div class="collapse" id="report-menu">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ route('reports.attendance.summary') }}">Summary Report</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('reports.attendance.detailed') }}">Detailed Report</a></li>
+              </ul>
+            </div>
+          </li>
+          @endcan
         </ul>
       </nav>
