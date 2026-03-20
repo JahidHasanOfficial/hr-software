@@ -13,7 +13,12 @@ class DashboardService
     public function getStatistics()
     {
         $attendanceService = app(\App\Services\AttendanceService::class);
+        $leaveService = app(\App\Services\LeaveService::class);
         $user = auth()->user();
+        
+        // Ensure leave balance is initialized
+        $leaveService->initializeUserBalances($user->id, date('Y'));
+
         $companyId = $user->company_id;
 
         $userQuery = User::query();
@@ -35,6 +40,9 @@ class DashboardService
             'pending_requests' => \App\Models\AttendanceRequest::where('user_id', $user->id)
                 ->where('status', 'pending')
                 ->count(),
+            'remaining_leave' => \App\Models\LeaveBalance::where('user_id', $user->id)
+                ->where('year', date('Y'))
+                ->sum('remaining_quota'),
         ];
 
         $myRecentLogs = \App\Models\Attendance::where('user_id', $user->id)

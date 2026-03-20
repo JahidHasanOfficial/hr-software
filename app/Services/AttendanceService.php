@@ -249,13 +249,34 @@ class AttendanceService
         $lateToday = (clone $attQuery)->where('status', 2)->count();
         $activeNow = (clone $attQuery)->whereNotNull('check_in_time')->whereNull('check_out_time')->count();
 
+        // Leave Overview
+        $leaveQuery = \App\Models\Leave::query();
+        if ($companyId) {
+            $leaveQuery->whereHas('user', function($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+        }
+        
+        $onLeaveToday = (clone $leaveQuery)->where('status', 'approved')
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->count();
+
+        $pendingLeaves = (clone $leaveQuery)->where('status', 'pending')->count();
+        $approvedLeaves = (clone $leaveQuery)->where('status', 'approved')->whereYear('start_date', date('Y'))->count();
+        $rejectedLeaves = (clone $leaveQuery)->where('status', 'rejected')->whereYear('start_date', date('Y'))->count();
+
         return [
             'total_employees' => $totalEmployees,
             'present' => $presentToday,
             'late' => $lateToday,
-            'absent' => max(0, $totalEmployees - $presentToday),
+            'on_leave' => $onLeaveToday,
+            'absent' => max(0, $totalEmployees - $presentToday - $onLeaveToday),
             'attendance_rate' => $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100) : 0,
             'active_now' => $activeNow,
+            'pending_leaves' => $pendingLeaves,
+            'approved_leaves' => $approvedLeaves,
+            'rejected_leaves' => $rejectedLeaves,
         ];
     }
 

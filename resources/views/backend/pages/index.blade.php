@@ -133,21 +133,51 @@
                         </div>
                     </div>
                     <div class="col-6 col-md-2 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-info">
+                            <p class="text-muted small font-weight-bold mb-1">ON LEAVE</p>
+                            <h3 class="text-info mb-0">{{ $attendanceStats['on_leave'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2 mb-3">
                         <div class="p-3 bg-light rounded border-bottom border-danger">
                             <p class="text-muted small font-weight-bold mb-1">ABSENT</p>
                             <h3 class="text-danger mb-0">{{ $attendanceStats['absent'] }}</h3>
                         </div>
                     </div>
                     <div class="col-6 col-md-2 mb-3">
-                        <div class="p-3 bg-light rounded border-bottom border-info">
+                        <div class="p-3 bg-light rounded border-bottom border-secondary">
                             <p class="text-muted small font-weight-bold mb-1">REAL-TIME RATE</p>
-                            <h3 class="text-info mb-0">{{ $attendanceStats['attendance_rate'] }}%</h3>
+                            <h3 class="text-secondary mb-0">{{ $attendanceStats['attendance_rate'] }}%</h3>
                         </div>
                     </div>
-                    <div class="col-6 col-md-2 mb-3">
-                        <div class="p-3 bg-light rounded border-bottom border-dark">
-                            <p class="text-muted small font-weight-bold mb-1">ACTIVE NOW</p>
-                            <h3 class="text-dark mb-0">{{ $attendanceStats['active_now'] }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Leave Processing Overview</h4>
+                <div class="row text-center">
+                    <div class="col-4 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-warning">
+                            <p class="text-muted small font-weight-bold mb-1">PENDING REQUESTS</p>
+                            <h3 class="text-warning mb-0">{{ $attendanceStats['pending_leaves'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-4 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-success">
+                            <p class="text-muted small font-weight-bold mb-1">APPROVED (YTD)</p>
+                            <h3 class="text-success mb-0">{{ $attendanceStats['approved_leaves'] }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-4 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded border-bottom border-danger">
+                            <p class="text-muted small font-weight-bold mb-1">REJECTED (YTD)</p>
+                            <h3 class="text-danger mb-0">{{ $attendanceStats['rejected_leaves'] }}</h3>
                         </div>
                     </div>
                 </div>
@@ -200,7 +230,7 @@
 
 @can('dashboard.employee_personal_stats')
 <div class="row">
-    <div class="col-md-4 stretch-card grid-margin">
+    <div class="col-md-3 stretch-card grid-margin">
         <div class="card bg-gradient-success card-img-holder text-white shadow">
             <div class="card-body">
                 <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
@@ -208,11 +238,11 @@
                     <i class="mdi mdi-check-circle mdi-24px float-right"></i>
                 </h4>
                 <h2 class="mb-5">{{ $personalStats['present'] }} Days</h2>
-                <h6 class="card-text">Total office presence this month</h6>
+                <h6 class="card-text">Total presence this month</h6>
             </div>
         </div>
     </div>
-    <div class="col-md-4 stretch-card grid-margin">
+    <div class="col-md-3 stretch-card grid-margin">
         <div class="card bg-gradient-warning card-img-holder text-white shadow">
             <div class="card-body">
                 <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
@@ -224,7 +254,19 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4 stretch-card grid-margin">
+    <div class="col-md-3 stretch-card grid-margin">
+        <div class="card bg-gradient-danger card-img-holder text-white shadow">
+            <div class="card-body">
+                <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>
+                <h4 class="font-weight-normal mb-3">Available Leave
+                    <i class="mdi mdi-calendar-check mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ $personalStats['remaining_leave'] }} Days</h2>
+                <h6 class="card-text">Total annual balance</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 stretch-card grid-margin">
         <div class="card bg-gradient-info card-img-holder text-white shadow">
             <div class="card-body">
                 <img src="{{ asset('backend/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image"/>

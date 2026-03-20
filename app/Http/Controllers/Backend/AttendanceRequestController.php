@@ -10,7 +10,15 @@ class AttendanceRequestController extends Controller
 {
     public function index()
     {
-        $requests = AttendanceRequest::with('user')->orderBy('created_at', 'desc')->paginate(15);
+        $user = auth()->user();
+        $query = AttendanceRequest::with('user')->orderBy('created_at', 'desc');
+        
+        // Filter for employees
+        if (!$user->hasRole('Admin') && !$user->hasRole('HR Manager') && !$user->hasPermissionTo('attendance management')) {
+            $query->where('user_id', $user->id);
+        }
+
+        $requests = $query->paginate(15);
         return view('backend.pages.attendance_requests.index', compact('requests'));
     }
 }

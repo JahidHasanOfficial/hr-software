@@ -15,6 +15,8 @@ use App\Http\Controllers\Backend\WeeklyOffController;
 use App\Http\Controllers\Backend\RosterController;
 use App\Http\Controllers\Backend\AttendanceRequestController;
 use App\Http\Controllers\Backend\AttendanceManualLogController;
+use App\Http\Controllers\Backend\LeaveController;
+use App\Http\Controllers\Backend\LeaveTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -111,12 +113,49 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/attendances', [AttendanceController::class, 'index'])->name('attendances.index')->middleware('permission:attendance.index');
 
         // Professional Attendance Features
-        Route::resource('/admin/holidays', HolidayController::class)->middleware('permission:holiday.index');
-        Route::resource('/admin/weekly-offs', WeeklyOffController::class)->middleware('permission:weekly_off.index');
-        Route::resource('/admin/rosters', RosterController::class)->middleware('permission:roster.index');
+        Route::get('/admin/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('permission:holiday.index');
+        Route::get('/admin/holidays/create', [HolidayController::class, 'create'])->name('holidays.create')->middleware('permission:holiday.create');
+        Route::post('/admin/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('permission:holiday.store');
+        Route::get('/admin/holidays/{holiday}/edit', [HolidayController::class, 'edit'])->name('holidays.edit')->middleware('permission:holiday.edit');
+        Route::put('/admin/holidays/{holiday}/update', [HolidayController::class, 'update'])->name('holidays.update')->middleware('permission:holiday.update');
+        Route::delete('/admin/holidays/{holiday}/destroy', [HolidayController::class, 'destroy'])->name('holidays.destroy')->middleware('permission:holiday.destroy');
+        
+        Route::get('/admin/weekly-offs', [WeeklyOffController::class, 'index'])->name('weekly-offs.index')->middleware('permission:weekly_off.index');
+        Route::get('/admin/weekly-offs/create', [WeeklyOffController::class, 'create'])->name('weekly-offs.create')->middleware('permission:weekly_off.create');
+        Route::post('/admin/weekly-offs/store', [WeeklyOffController::class, 'store'])->name('weekly-offs.store')->middleware('permission:weekly_off.store');
+        Route::get('/admin/weekly-offs/{weeklyOff}/edit', [WeeklyOffController::class, 'edit'])->name('weekly-offs.edit')->middleware('permission:weekly_off.edit');
+        Route::put('/admin/weekly-offs/{weeklyOff}/update', [WeeklyOffController::class, 'update'])->name('weekly-offs.update')->middleware('permission:weekly_off.update');
+        Route::delete('/admin/weekly-offs/{weeklyOff}/destroy', [WeeklyOffController::class, 'destroy'])->name('weekly-offs.destroy')->middleware('permission:weekly_off.destroy');
+        
+        Route::get('/admin/rosters', [RosterController::class, 'index'])->name('rosters.index')->middleware('permission:roster.index');
+        Route::get('/admin/rosters/create', [RosterController::class, 'create'])->name('rosters.create')->middleware('permission:roster.create');
+        Route::post('/admin/rosters/store', [RosterController::class, 'store'])->name('rosters.store')->middleware('permission:roster.store');
+        Route::get('/admin/rosters/{roster}/edit', [RosterController::class, 'edit'])->name('rosters.edit')->middleware('permission:roster.edit');
+        Route::put('/admin/rosters/{roster}/update', [RosterController::class, 'update'])->name('rosters.update')->middleware('permission:roster.update');
+        Route::delete('/admin/rosters/{roster}/destroy', [RosterController::class, 'destroy'])->name('rosters.destroy')->middleware('permission:roster.destroy');
+        
         Route::get('/admin/attendance-requests', [AttendanceRequestController::class, 'index'])->name('attendance-requests.index')->middleware('permission:attendance_request.index');
         Route::get('/admin/attendance-manual-logs', [AttendanceManualLogController::class, 'index'])->name('attendance-manual-logs.index')->middleware('permission:attendance_manual_log.index');
     });
+
+    // Leave Management
+    Route::get('/admin/leave-types', [LeaveTypeController::class, 'index'])->name('leave-types.index')->middleware('permission:leave_type.index');
+    Route::get('/admin/leave-types/create', [LeaveTypeController::class, 'create'])->name('leave-types.create')->middleware('permission:leave_type.create');
+    Route::post('/admin/leave-types/store', [LeaveTypeController::class, 'store'])->name('leave-types.store')->middleware('permission:leave_type.store');
+    Route::get('/admin/leave-types/{leaveType}/edit', [LeaveTypeController::class, 'edit'])->name('leave-types.edit')->middleware('permission:leave_type.edit');
+    Route::put('/admin/leave-types/{leaveType}/update', [LeaveTypeController::class, 'update'])->name('leave-types.update')->middleware('permission:leave_type.update');
+    Route::delete('/admin/leave-types/{leaveType}/destroy', [LeaveTypeController::class, 'destroy'])->name('leave-types.destroy')->middleware('permission:leave_type.destroy'); 
+    
+    Route::get('/admin/leaves', [LeaveController::class, 'index'])->name('leaves.index')->middleware('permission:leave.index');
+    Route::get('/admin/leaves/create', [LeaveController::class, 'create'])->name('leaves.create')->middleware('permission:leave.create');
+    Route::post('/admin/leaves/store', [LeaveController::class, 'store'])->name('leaves.store')->middleware('permission:leave.store');
+    Route::get('/admin/leaves/{leave}/edit', [LeaveController::class, 'edit'])->name('leaves.edit')->middleware('permission:leave.edit');
+    Route::put('/admin/leaves/{leave}/update', [LeaveController::class, 'update'])->name('leaves.update')->middleware('permission:leave.update');
+    Route::delete('/admin/leaves/{leave}/destroy', [LeaveController::class, 'destroy'])->name('leaves.destroy')->middleware('permission:leave.destroy');
+    Route::post('/admin/leaves/{id}/approve', [LeaveController::class, 'approve'])->name('leaves.approve')->middleware('permission:leave.approve');
+    Route::post('/admin/leaves/{id}/reject', [LeaveController::class, 'reject'])->name('leaves.reject')->middleware('permission:leave.reject');
+    // Leave Balances       
+    Route::get('/admin/leave-balances', [LeaveController::class, 'balances'])->name('leaves.balances')->middleware('permission:leave_type.index');
 });
 
 Route::middleware('auth')->group(function () {

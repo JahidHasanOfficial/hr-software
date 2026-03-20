@@ -65,6 +65,10 @@ class RolePermissionSeeder extends Seeder
             'dashboard.statistics_cards',
             'dashboard.recent_employees',
             'dashboard.employee_personal_stats',
+
+            // New Leave Management Permissions
+            'leave_type.index', 'leave_type.create', 'leave_type.store', 'leave_type.edit', 'leave_type.update', 'leave_type.destroy',
+            'leave.index', 'leave.create', 'leave.store', 'leave.show', 'leave.edit', 'leave.update', 'leave.destroy', 'leave.approve', 'leave.reject',
         ];
 
         // Create Permissions
@@ -99,6 +103,9 @@ class RolePermissionSeeder extends Seeder
             'dashboard.real_time_overview',
             'dashboard.statistics_cards',
             'dashboard.recent_employees',
+            // Leave Management HR
+            'leave_type.index', 'leave_type.create', 'leave_type.store', 'leave_type.edit', 'leave_type.update', 'leave_type.destroy',
+            'leave.index', 'leave.show', 'leave.approve', 'leave.reject',
         ]);
 
         // 3. Employee
@@ -114,6 +121,8 @@ class RolePermissionSeeder extends Seeder
             'attendance_request.create',
             'profile.edit',
             'profile.update',
+            // Leave Management Employee
+            'leave.index', 'leave.create', 'leave.store', 'leave.show',
         ]);
 
         // --- Users ---

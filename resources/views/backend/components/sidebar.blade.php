@@ -70,8 +70,11 @@
                 <li class="nav-item"> <a class="nav-link" href="{{ route('attendances.index') }}">Attendance Logs</a></li>
                 @endcan
                 
-                @can('attendance management')
+                @can('attendance_request.index')
                 <li class="nav-item"> <a class="nav-link" href="{{ route('attendance-requests.index') }}">Attendance Requests</a></li>
+                @endcan
+
+                @can('attendance management')
                 <li class="nav-item"> <a class="nav-link" href="{{ route('rosters.index') }}">Rosters / Scheduling</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{ route('holidays.index') }}">Holidays</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{ route('weekly-offs.index') }}">Weekly Offs</a></li>
@@ -96,6 +99,34 @@
             </a>
           </li>
           @endcan
+
+          @if(auth()->user()->can('leave.index') || auth()->user()->can('leave_type.index'))
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#leave-menu" aria-expanded="false" aria-controls="leave-menu">
+              <span class="menu-title">Leave Management</span>
+              <i class="menu-arrow"></i>
+              <i class="mdi mdi-calendar-text menu-icon"></i>
+            </a>
+            <div class="collapse" id="leave-menu">
+              <ul class="nav flex-column sub-menu">
+                @can('leave.index')
+                <li class="nav-item"> 
+                  <a class="nav-link" href="{{ route('leaves.index', ['type' => 'personal']) }}">My Leaves</a>
+                </li>
+                @if(auth()->user()->can('leave.approve'))
+                <li class="nav-item"> 
+                  <a class="nav-link" href="{{ route('leaves.index') }}">Manage Applications</a>
+                </li>
+                @endif
+                @endcan
+                @can('leave_type.index')
+                <li class="nav-item"> <a class="nav-link" href="{{ route('leave-types.index') }}">Leave Types</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('leaves.balances') }}">Global Balances</a></li>
+                @endcan
+              </ul>
+            </div>
+          </li>
+          @endif
 
           @can('payroll management')
           <li class="nav-item">

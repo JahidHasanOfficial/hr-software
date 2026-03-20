@@ -121,6 +121,16 @@ class User extends Authenticatable
         return $this->hasMany(AttendanceRequest::class);
     }
 
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+
+    public function leaveBalances()
+    {
+        return $this->hasMany(LeaveBalance::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
