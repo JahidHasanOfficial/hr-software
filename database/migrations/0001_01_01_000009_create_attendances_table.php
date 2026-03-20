@@ -40,7 +40,8 @@ return new class extends Migration
             $blueprint->integer('early_leaving_minutes')->default(0);
             $blueprint->integer('overtime_minutes')->default(0);
             
-            $blueprint->tinyInteger('status')->default(0); // 0 = absent, 1 = present, 2 = late, 3 = half_day, 4 = leave
+            $blueprint->tinyInteger('status')->default(0); 
+            $blueprint->boolean('is_calculated')->default(false);
             $blueprint->text('notes')->nullable();
             
             $blueprint->timestamps();

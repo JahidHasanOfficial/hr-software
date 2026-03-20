@@ -25,11 +25,12 @@ class Attendance extends Model
         'check_out_longitude', 
         'check_out_ip',
         'stay_minutes', 
-        'late_minutes', 
-        'early_leaving_minutes', 
-        'overtime_minutes', 
-        'status', 
-        'notes'
+        'late_minutes',
+        'early_leaving_minutes',
+        'overtime_minutes',
+        'status',
+        'is_calculated',
+        'notes',
     ];
 
     public function user()

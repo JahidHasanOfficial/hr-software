@@ -18,7 +18,9 @@ return new class extends Migration
             $table->integer('quota')->default(0); // Max days per year
             $table->boolean('is_accruable')->default(false); // If leave accrues monthly (e.g., 1 day/month)
             $table->boolean('requires_attachment')->default(false); // If medical doc or other is needed
-            $table->tinyInteger('status')->default(1); // 1: Active, 0: Inactive
+            $table->string('color')->nullable();
+            $table->boolean('is_paid')->default(true);
+            $table->tinyInteger('status')->default(1); 
             $table->timestamps();
         });
     }

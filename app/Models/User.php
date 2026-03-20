@@ -131,6 +131,16 @@ class User extends Authenticatable
         return $this->hasMany(LeaveBalance::class);
     }
 
+    public function salarySetup()
+    {
+        return $this->hasOne(EmployeeSalary::class);
+    }
+
+    public function payslips()
+    {
+        return $this->hasMany(Payslip::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

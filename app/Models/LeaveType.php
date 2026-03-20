@@ -12,6 +12,8 @@ class LeaveType extends Model
         'quota',
         'is_accruable',
         'requires_attachment',
+        'color',
+        'is_paid',
         'status',
     ];
 

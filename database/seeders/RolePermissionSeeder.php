@@ -69,7 +69,16 @@ class RolePermissionSeeder extends Seeder
             // New Leave Management Permissions
             'leave_type.index', 'leave_type.create', 'leave_type.store', 'leave_type.edit', 'leave_type.update', 'leave_type.destroy',
             'leave.index', 'leave.create', 'leave.store', 'leave.show', 'leave.edit', 'leave.update', 'leave.destroy', 'leave.approve', 'leave.reject',
+           
+            // Salary Components
+            'salary_component.index', 'salary_component.create', 'salary_component.store', 'salary_component.edit', 'salary_component.update', 'salary_component.destroy',
 
+            // Employee Salary
+            'employee_salary.index', 'employee_salary.edit', 'employee_salary.update',
+
+            // Payroll Processing
+            'payroll.index', 'payroll.create', 'payroll.preview', 'payroll.store', 'payroll.show', 'payroll.payslip',
+            
             // Professional Attendance Reporting
             'attendance.report', 'attendance.export', 'attendance.correction',
         ];

@@ -161,5 +161,21 @@
             </div>
           </li>
           @endcan
+
+          @can('payroll management')
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#payroll-menu" aria-expanded="false" aria-controls="payroll-menu">
+              <span class="menu-title">Payroll Management</span>
+              <i class="menu-arrow"></i>
+              <i class="mdi mdi-finance menu-icon"></i>
+            </a>
+            <div class="collapse" id="payroll-menu">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ route('salary-components.index') }}">Salary Components</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('employee-salary.index') }}">Salary Setup</a></li>
+              </ul>
+            </div>
+          </li>
+          @endcan
         </ul>
       </nav>

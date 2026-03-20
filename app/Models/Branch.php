@@ -9,7 +9,7 @@ class Branch extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['company_id', 'shift_id', 'name', 'location', 'email', 'phone', 'status'];
+    protected $fillable = ['company_id', 'shift_id', 'name', 'address', 'email', 'phone', 'status'];
 
     public function company()
     {

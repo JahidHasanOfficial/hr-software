@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('shift_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
-            $table->string('location')->nullable();
+            $table->string('address')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->tinyInteger('status')->default(1);

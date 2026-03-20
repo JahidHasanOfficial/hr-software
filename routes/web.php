@@ -18,6 +18,9 @@ use App\Http\Controllers\Backend\AttendanceManualLogController;
 use App\Http\Controllers\Backend\AttendanceReportController;
 use App\Http\Controllers\Backend\LeaveController;
 use App\Http\Controllers\Backend\LeaveTypeController;
+use App\Http\Controllers\Backend\SalaryComponentController;
+use App\Http\Controllers\Backend\EmployeeSalaryController;
+use App\Http\Controllers\Backend\PayrollController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -164,6 +167,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Attendance Reports
     Route::get('/admin/reports/attendance/summary', [AttendanceReportController::class, 'summary'])->name('reports.attendance.summary')->middleware('permission:attendance.report');
     Route::get('/admin/reports/attendance/detailed', [AttendanceReportController::class, 'detailed'])->name('reports.attendance.detailed')->middleware('permission:attendance.report');
+
+    // Payroll Management
+    Route::middleware('permission:payroll management')->group(function () {
+        Route::get('/admin/salary-components', [SalaryComponentController::class, 'index'])->name('salary-components.index');
+        Route::post('/admin/salary-components', [SalaryComponentController::class, 'store'])->name('salary-components.store');
+        Route::put('/admin/salary-components/{component}', [SalaryComponentController::class, 'update'])->name('salary-components.update');
+        Route::delete('/admin/salary-components/{component}', [SalaryComponentController::class, 'destroy'])->name('salary-components.destroy');
+        Route::get('/admin/employee-salary', [EmployeeSalaryController::class, 'index'])->name('employee-salary.index');
+        Route::get('/admin/employee-salary/{id}/edit', [EmployeeSalaryController::class, 'edit'])->name('employee-salary.edit');
+        Route::put('/admin/employee-salary/{id}', [EmployeeSalaryController::class, 'update'])->name('employee-salary.update');
+
+        // Payroll Processing Cycles
+        Route::get('/admin/payroll', [PayrollController::class, 'index'])->name('payroll.index');
+        Route::get('/admin/payroll/create', [PayrollController::class, 'create'])->name('payroll.create');
+        Route::get('/admin/payroll/preview', [PayrollController::class, 'preview'])->name('payroll.preview');
+        Route::post('/admin/payroll/store', [PayrollController::class, 'store'])->name('payroll.store');
+        Route::get('/admin/payroll/{id}', [PayrollController::class, 'show'])->name('payroll.show');
+        Route::get('/admin/payslip/{id}', [PayrollController::class, 'payslip'])->name('payroll.payslip');
+    });
 });
 
 Route::middleware('auth')->group(function () {

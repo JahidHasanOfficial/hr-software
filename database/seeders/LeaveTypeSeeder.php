@@ -2,45 +2,22 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\LeaveType;
 use Illuminate\Database\Seeder;
 
 class LeaveTypeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $types = [
-            [
-                'name' => 'Casual Leave',
-                'code' => 'CL',
-                'quota' => 12,
-                'is_accruable' => false,
-                'requires_attachment' => false,
-                'status' => 1,
-            ],
-            [
-                'name' => 'Sick Leave',
-                'code' => 'SL',
-                'quota' => 8,
-                'is_accruable' => false,
-                'requires_attachment' => true,
-                'status' => 1,
-            ],
-            [
-                'name' => 'Earned Leave',
-                'code' => 'EL',
-                'quota' => 15,
-                'is_accruable' => true,
-                'status' => 1,
-                'requires_attachment' => false,
-            ],
+            ['name' => 'Sick Leave', 'code' => 'SL', 'quota' => 14, 'color' => '#ff0000', 'is_paid' => 1, 'status' => 1],
+            ['name' => 'Casual Leave', 'code' => 'CL', 'quota' => 10, 'color' => '#00ff00', 'is_paid' => 1, 'status' => 1],
+            ['name' => 'Earned Leave', 'code' => 'EL', 'quota' => 20, 'color' => '#0000ff', 'is_paid' => 1, 'status' => 1],
+            ['name' => 'Leave Without Pay', 'code' => 'LWP', 'quota' => 0, 'color' => '#000000', 'is_paid' => 0, 'status' => 1],
         ];
 
         foreach ($types as $type) {
-            \App\Models\LeaveType::updateOrCreate(['code' => $type['code']], $type);
+            LeaveType::updateOrCreate(['name' => $type['name']], $type);
         }
     }
 }
