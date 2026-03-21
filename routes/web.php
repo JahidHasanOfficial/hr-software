@@ -21,6 +21,12 @@ use App\Http\Controllers\Backend\LeaveTypeController;
 use App\Http\Controllers\Backend\SalaryComponentController;
 use App\Http\Controllers\Backend\EmployeeSalaryController;
 use App\Http\Controllers\Backend\PayrollController;
+use App\Http\Controllers\Backend\Recruitment\JobRequisitionController;
+use App\Http\Controllers\Backend\Recruitment\JobPostController;
+use App\Http\Controllers\Backend\Recruitment\CandidateController;
+use App\Http\Controllers\Backend\Recruitment\InterviewController;
+use App\Http\Controllers\Backend\Recruitment\ScorecardController;
+use App\Http\Controllers\Backend\Recruitment\OfferController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -185,6 +191,67 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/payroll/store', [PayrollController::class, 'store'])->name('payroll.store');
         Route::get('/admin/payroll/{id}', [PayrollController::class, 'show'])->name('payroll.show');
         Route::get('/admin/payslip/{id}', [PayrollController::class, 'payslip'])->name('payroll.payslip');
+    });
+
+    /**
+     * Recruitment (ATS) Module
+     */
+    Route::prefix('admin/recruitment')->name('recruitment.')->group(function () {
+        // Job Requisitions
+        Route::get('job-requisitions', [JobRequisitionController::class, 'index'])->name('job-requisitions.index')->middleware('permission:job-requisition.index');
+        Route::get('job-requisitions/create', [JobRequisitionController::class, 'create'])->name('job-requisitions.create')->middleware('permission:job-requisition.create');
+        Route::post('job-requisitions/store', [JobRequisitionController::class, 'store'])->name('job-requisitions.store')->middleware('permission:job-requisition.store');
+        Route::get('job-requisitions/{id}/edit', [JobRequisitionController::class, 'edit'])->name('job-requisitions.edit')->middleware('permission:job-requisition.edit');
+        Route::put('job-requisitions/{id}/update', [JobRequisitionController::class, 'update'])->name('job-requisitions.update')->middleware('permission:job-requisition.update');
+        Route::delete('job-requisitions/{id}/destroy', [JobRequisitionController::class, 'destroy'])->name('job-requisitions.destroy')->middleware('permission:job-requisition.destroy');
+        Route::get('job-requisitions/{id}/show', [JobRequisitionController::class, 'show'])->name('job-requisitions.show')->middleware('permission:job-requisition.show');
+        Route::post('job-requisitions/{id}/approve', [JobRequisitionController::class, 'approve'])->name('job-requisitions.approve')->middleware('permission:job-requisition.approve');
+        Route::post('job-requisitions/{id}/reject', [JobRequisitionController::class, 'reject'])->name('job-requisitions.reject')->middleware('permission:job-requisition.reject');
+
+        // Job Posts
+        Route::get('job-posts', [JobPostController::class, 'index'])->name('job-posts.index')->middleware('permission:job-post.index');
+        Route::get('job-posts/create', [JobPostController::class, 'create'])->name('job-posts.create')->middleware('permission:job-post.create');
+        Route::post('job-posts/store', [JobPostController::class, 'store'])->name('job-posts.store')->middleware('permission:job-post.store');
+        Route::get('job-posts/{id}/edit', [JobPostController::class, 'edit'])->name('job-posts.edit')->middleware('permission:job-post.edit');
+        Route::put('job-posts/{id}/update', [JobPostController::class, 'update'])->name('job-posts.update')->middleware('permission:job-post.update');
+        Route::delete('job-posts/{id}/destroy', [JobPostController::class, 'destroy'])->name('job-posts.destroy')->middleware('permission:job-post.destroy');
+        Route::get('job-posts/{id}/show', [JobPostController::class, 'show'])->name('job-posts.show')->middleware('permission:job-post.show');
+        Route::post('job-posts/{id}/publish', [JobPostController::class, 'publish'])->name('job-posts.publish')->middleware('permission:job-post.publish');
+
+        // Candidate Management
+        Route::get('candidates', [CandidateController::class, 'index'])->name('candidates.index')->middleware('permission:candidate.index');
+        Route::get('candidates/create', [CandidateController::class, 'create'])->name('candidates.create')->middleware('permission:candidate.create');
+        Route::post('candidates/store', [CandidateController::class, 'store'])->name('candidates.store')->middleware('permission:candidate.store');
+        Route::get('candidates/{id}/edit', [CandidateController::class, 'edit'])->name('candidates.edit')->middleware('permission:candidate.edit');
+        Route::put('candidates/{id}/update', [CandidateController::class, 'update'])->name('candidates.update')->middleware('permission:candidate.update');
+        Route::get('candidates/{id}/show', [CandidateController::class, 'show'])->name('candidates.show')->middleware('permission:candidate.show');
+        Route::delete('candidates/{id}/destroy', [CandidateController::class, 'destroy'])->name('candidates.destroy')->middleware('permission:candidate.destroy');
+        Route::get('candidates-kanban', [CandidateController::class, 'kanban'])->name('candidates.kanban')->middleware('permission:candidate.kanban');
+        Route::post('candidates/{id}/move', [CandidateController::class, 'move'])->name('candidates.move')->middleware('permission:candidate.move');
+
+        // Interviews
+        Route::get('interviews', [InterviewController::class, 'index'])->name('interviews.index')->middleware('permission:interview.index');
+        Route::get('interviews/create', [InterviewController::class, 'create'])->name('interviews.create')->middleware('permission:interview.create');
+        Route::post('interviews/store', [InterviewController::class, 'store'])->name('interviews.store')->middleware('permission:interview.store');
+        Route::get('interviews/{id}/edit', [InterviewController::class, 'edit'])->name('interviews.edit')->middleware('permission:interview.edit');
+        Route::put('interviews/{id}/update', [InterviewController::class, 'update'])->name('interviews.update')->middleware('permission:interview.update');
+        Route::delete('interviews/{id}/destroy', [InterviewController::class, 'destroy'])->name('interviews.destroy')->middleware('permission:interview.destroy');
+
+        // Scorecards
+        Route::get('scorecards', [ScorecardController::class, 'index'])->name('scorecards.index')->middleware('permission:scorecard.index');
+        Route::get('scorecards/create', [ScorecardController::class, 'create'])->name('scorecards.create')->middleware('permission:scorecard.create');
+        Route::post('scorecards/store', [ScorecardController::class, 'store'])->name('scorecards.store')->middleware('permission:scorecard.store');
+        Route::get('scorecards/{id}/edit', [ScorecardController::class, 'edit'])->name('scorecards.edit')->middleware('permission:scorecard.edit');
+        Route::put('scorecards/{id}/update', [ScorecardController::class, 'update'])->name('scorecards.update')->middleware('permission:scorecard.update');
+        Route::delete('scorecards/{id}/destroy', [ScorecardController::class, 'destroy'])->name('scorecards.destroy')->middleware('permission:scorecard.destroy');
+
+        // Offers
+        Route::get('offers', [OfferController::class, 'index'])->name('offers.index')->middleware('permission:offer.index');
+        Route::get('offers/create', [OfferController::class, 'create'])->name('offers.create')->middleware('permission:offer.create');
+        Route::post('offers/store', [OfferController::class, 'store'])->name('offers.store')->middleware('permission:offer.store');
+        Route::get('offers/{id}/edit', [OfferController::class, 'edit'])->name('offers.edit')->middleware('permission:offer.edit');
+        Route::put('offers/{id}/update', [OfferController::class, 'update'])->name('offers.update')->middleware('permission:offer.update');
+        Route::delete('offers/{id}/destroy', [OfferController::class, 'destroy'])->name('offers.destroy')->middleware('permission:offer.destroy');
     });
 });
 

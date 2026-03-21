@@ -23,6 +23,13 @@ class DatabaseSeeder extends Seeder
             AttendanceDummySeeder::class,
             LeaveDummySeeder::class,
             PayrollDummySeeder::class,
+            CandidateStageSeeder::class,
+            JobRequisitionSeeder::class,
+            JobPostSeeder::class,
+            CandidateSeeder::class,
+            InterviewSeeder::class,
+            ScorecardSeeder::class,
+            OfferSeeder::class,
         ]);
     }
 }

@@ -81,6 +81,15 @@ class RolePermissionSeeder extends Seeder
             
             // Professional Attendance Reporting
             'attendance.report', 'attendance.export', 'attendance.correction',
+
+            // Recruitment (ATS)
+            'recruitment.index',
+            'job-requisition.index', 'job-requisition.create', 'job-requisition.store', 'job-requisition.show', 'job-requisition.edit', 'job-requisition.update', 'job-requisition.destroy', 'job-requisition.approve', 'job-requisition.reject',
+            'job-post.index', 'job-post.create', 'job-post.store', 'job-post.show', 'job-post.edit', 'job-post.update', 'job-post.destroy', 'job-post.publish',
+            'candidate.index', 'candidate.create', 'candidate.store', 'candidate.show', 'candidate.edit', 'candidate.update', 'candidate.destroy', 'candidate.kanban', 'candidate.move',
+            'interview.index', 'interview.create', 'interview.store', 'interview.show', 'interview.edit', 'interview.update', 'interview.destroy',
+            'scorecard.index', 'scorecard.create', 'scorecard.store', 'scorecard.show', 'scorecard.edit', 'scorecard.update', 'scorecard.destroy',
+            'offer.index', 'offer.create', 'offer.store', 'offer.show', 'offer.edit', 'offer.update', 'offer.destroy',
         ];
 
         // Create Permissions
@@ -119,6 +128,15 @@ class RolePermissionSeeder extends Seeder
             'leave_type.index', 'leave_type.create', 'leave_type.store', 'leave_type.edit', 'leave_type.update', 'leave_type.destroy',
             'leave.index', 'leave.show', 'leave.approve', 'leave.reject',
             'attendance.report', 'attendance.export', 'attendance.correction',
+
+            // Recruitment
+            'recruitment.index',
+            'job-requisition.index', 'job-requisition.create', 'job-requisition.store', 'job-requisition.show', 'job-requisition.edit', 'job-requisition.update', 'job-requisition.destroy', 'job-requisition.approve', 'job-requisition.reject',
+            'job-post.index', 'job-post.create', 'job-post.store', 'job-post.show', 'job-post.edit', 'job-post.update', 'job-post.destroy', 'job-post.publish',
+            'candidate.index', 'candidate.create', 'candidate.store', 'candidate.show', 'candidate.edit', 'candidate.update', 'candidate.destroy', 'candidate.kanban', 'candidate.move',
+            'interview.index', 'interview.create', 'interview.store', 'interview.show', 'interview.edit', 'interview.update', 'interview.destroy',
+            'scorecard.index', 'scorecard.create', 'scorecard.store', 'scorecard.show', 'scorecard.edit', 'scorecard.update', 'scorecard.destroy',
+            'offer.index', 'offer.create', 'offer.store', 'offer.show', 'offer.edit', 'offer.update', 'offer.destroy',
         ]);
 
         // 3. Employee
